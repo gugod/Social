@@ -1,6 +1,6 @@
 (function($) {
 
-    var clientId = "42";
+    var clientId = Date.now().toString() + Math.random().toString().replace(".", "");
 
     $.ev.loop('/comet/channel/jabbot/stream/' + clientId, {
         "irc": function(ev) {
