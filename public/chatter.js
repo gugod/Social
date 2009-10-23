@@ -1,4 +1,4 @@
-(function($) {
+jQuery(function($) {
 
     var clientId = Date.now().toString() + Math.random().toString().replace(".", "");
 
@@ -13,4 +13,9 @@
         }
     });
 
-})(jQuery);
+    $("form").submit(function(e) {
+        $.post( $(this).attr("action"), $(this).serialize() );
+        return false;
+    });
+
+});

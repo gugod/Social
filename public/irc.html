@@ -9,6 +9,13 @@
     <body>
         <h1>Chatter - IRC</h1>
 
+        <form id="say" method="post" action="/say.cgi">
+            <p>
+                Channel: <input type="text" name="channel" value="#jabbot" readonly="readonly" />
+                Text: <input type="text" name="text" />
+                <input type="submit" value="Send" />
+            </p>
+        </form>
         <div id="messages">
             <div>(END)</div>
         </div>

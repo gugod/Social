@@ -75,9 +75,14 @@ my $httpd = AnyEvent::HTTPD->new(port => 11236);
 $httpd->reg_cb (
     '/say' => sub {
         my ($httpd, $req) = @_;
-        my $text = $req->parm("text");
 
-        my $channel = '#jabbot';
+        my $text = $req->parm("text");
+        my $channel = $req->parm("channel");
+
+        print "say $channel, $text\n";
+
+        return $req->respond({ content => ['text/plain', 'NOK'] })
+            unless defined($text) && defined($channel);
 
         $con->send_srv('PRIVMSG', $channel, $text);
         stardust_send($channel, $con->nick, $text);
