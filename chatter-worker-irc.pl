@@ -60,7 +60,6 @@ $con->reg_cb(
         my ($con, $channel, $ircmsg) = @_;
 
         my $nick = prefix_nick( $ircmsg->{prefix} );
-
         my (undef, $text) = @{$ircmsg->{params}};
 
         stardust_send($channel, $nick, $text);
@@ -68,5 +67,24 @@ $con->reg_cb(
 );
 
 $con->connect ("chat.freenode.net", 6667, { nick => 'jabbot2' });
+
+use AnyEvent::HTTPD;
+
+my $httpd = AnyEvent::HTTPD->new(port => 11236);
+
+$httpd->reg_cb (
+    '/say' => sub {
+        my ($httpd, $req) = @_;
+        my $text = $req->parm("text");
+
+        my $channel = '#jabbot';
+
+        $con->send_srv('PRIVMSG', $channel, $text);
+        stardust_send($channel, $con->nick, $text);
+
+        $req->respond({ content => ['text/plain', 'OK'] });
+    }
+);
+
 $c->wait;
 $con->disconnect;
