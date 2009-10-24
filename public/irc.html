@@ -5,19 +5,18 @@
         <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="jquery.ev.js"></script>
         <script type="text/javascript" src="chatter.js"></script>
+        <style type="text/css" media="screen">
+            @import url(chatter.css);
+        </style>
     </head>
     <body>
-        <h1>Chatter - IRC</h1>
-
         <form id="say" method="post" action="/say.cgi">
             <p>
-                Channel: <input type="text" name="channel" value="#jabbot" readonly="readonly" />
-                Text: <input type="text" name="text" />
+                <input type="text" name="channel" readonly="readonly" />
+                <input type="text" name="text" />
                 <input type="submit" value="Send" />
             </p>
         </form>
-        <div id="messages">
-            <div>(END)</div>
-        </div>
+        <div id="messages"></div>
     </body>
 </html>

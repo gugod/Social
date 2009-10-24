@@ -1,21 +1,32 @@
 jQuery(function($) {
 
+    var channel = location.hash;
+
+    if (!channel) return;
+
+    $("input[name=channel]").val(channel);
+
     var clientId = Date.now().toString() + Math.random().toString().replace(".", "");
 
-    $.ev.loop('/comet/channel/jabbot/stream/' + clientId, {
+    $.ev.loop('/comet/channel/' + channel.replace(/^#/, "") + '/stream/' + clientId, {
         "irc": function(ev) {
             var nick = ev.data[0];
             var text = ev.data[1];
 
             $("<p/>").html(
                 "<span>" + nick +  "</span>: " + text
-            ).prependTo("#messages");
+            ).appendTo("#messages");
+
+            $("#messages").scrollTop( $("#messages").height() );
         }
     });
 
-    $("form").submit(function(e) {
+    $("#say").submit(function(e) {
         $.post( $(this).attr("action"), $(this).serialize() );
+        $("#say input[name=text]").focus();
         return false;
     });
+
+    $("#say input[name=text]").focus();
 
 });

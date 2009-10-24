@@ -1,0 +1,19 @@
+* { padding: 0; margin: 0; }
+
+#say {
+    background: #ccf;
+    position: fixed;
+    top: 320px;
+    padding: 5px;
+}
+#say input[name=channel] {
+    width: 60px;
+}
+
+#messages {
+    margin-bottom: 80px;
+    background: #ffc;
+    padding: 5px;
+    height: 305px;
+    overflow-y: scroll;
+}
