@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
     <head>
+        <meta name="viewport" content="width=320px, heighi: 356px, user-scale=no" />
+
         <title>Chatter - IRC</title>
         <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="jquery.ev.js"></script>
@@ -12,7 +14,7 @@
     <body>
         <form id="say" method="post" action="/say.cgi">
             <p>
-                <input type="text" name="channel" readonly="readonly" />
+                <input type="hidden" name="channel" />
                 <input type="text" name="text" />
                 <input type="submit" value="Send" />
             </p>

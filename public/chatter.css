@@ -1,6 +1,10 @@
+html {-webkit-text-size-adjust:none}
+
 * { padding: 0; margin: 0; }
 
 #say {
+    width: 100%;
+
     background: #ccf;
     position: fixed;
     top: 320px;
@@ -11,6 +15,8 @@
 }
 
 #messages {
+    width: 100%;
+
     margin-bottom: 80px;
     background: #ffc;
     padding: 5px;

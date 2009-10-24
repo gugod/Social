@@ -22,8 +22,11 @@ jQuery(function($) {
     });
 
     $("#say").submit(function(e) {
-        $.post( $(this).attr("action"), $(this).serialize() );
-        $("#say input[name=text]").focus();
+        $.post(
+            $(this).attr("action"),
+            $(this).serialize(), function() {
+             $("#say input[name=text]").focus().val("");
+            });
         return false;
     });
 
