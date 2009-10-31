@@ -86,9 +86,21 @@ use base qw(Tatsumaki::Handler);
 sub get {
     my($self, $channel) = @_;
 
-    $IRC_CLIENT->send_srv(JOIN => "#" . $channel);
+    $IRC_CLIENT->send_srv(JOIN => "#" . $channel)
+        unless($IRC_CLIENT->channel_list->{"#".$channel});
 
     $self->render('chat.html');
+}
+
+package ChannelsHandler;
+use base qw(Tatsumaki::Handler);
+
+sub get {
+    my($self) = @_;
+
+    $self->render('channels.html', {
+        channels => [map { s/^#//; $_ } keys %{$IRC_CLIENT->channel_list}]
+    });
 }
 
 package main;
@@ -98,9 +110,10 @@ use File::Basename;
 my $chat_re = '[\w\.\-]+';
 
 my $app = Tatsumaki::Application->new([
-    "/chat/($chat_re)/mxhrpoll" => 'ChatMultipartPollHandler',
-    "/chat/($chat_re)/post" => 'ChatPostHandler',
-    "/chat/($chat_re)" => 'ChatRoomHandler'
+    "/channels/($chat_re)/mxhrpoll" => 'ChatMultipartPollHandler',
+    "/channels/($chat_re)/post" => 'ChatPostHandler',
+    "/channels/($chat_re)" => 'ChatRoomHandler',
+    "/channels" => "ChannelsHandler"
 ]);
 
 $app->template_path(dirname(__FILE__) . "/templates");

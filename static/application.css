@@ -1,0 +1,45 @@
+#messages {
+  margin: 1em 0;
+}
+.avatar {
+  width: 25px;
+  vertical-align: top;
+}
+.avatar img {
+  width: 25px;
+  height: 25px;
+  vertical-align: top;
+  margin-right: 0.5em;
+}
+.chat-message {
+  vertical-align: middle;
+}
+.chat-message .name {
+  font-weight: bold;
+}
+.meta {
+  vertical-align: top;
+  color: #888;
+  font-size: 0.8em;
+}
+body {
+  margin: 5px;
+}
+.message .avatar {
+    float: left;
+    margin: 0 5px 5px 0;
+    padding: 0;
+}
+.message .chat-message {
+    line-height: 15px;
+    min-height: 30px;
+    margin: 0 5px 5px 0;
+    padding: 0;
+}
+
+.message .meta {
+    display: none;
+    height: 25px;
+    margin: 0 5px 5px 30px;
+    padding: 0;
+}
