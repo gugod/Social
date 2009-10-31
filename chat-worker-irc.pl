@@ -48,7 +48,7 @@ sub post {
     my $text = Encode::decode_utf8($v->{text});
 
     print "Post to $channel\n";
-    $IRC_CLIENT->send_srv('PRIVMSG', "#" . $channel, $text);
+    $IRC_CLIENT->send_srv('PRIVMSG', "#" . $channel, $v->{text});
 
     my $html = $self->format_message($text);
     my $mq = Tatsumaki::MessageQueue->instance($channel);
