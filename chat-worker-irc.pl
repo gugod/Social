@@ -3,6 +3,17 @@ use strict;
 use warnings;
 use 5.010;
 
+use YAML qw(LoadFile);
+use Getopt::Std;
+
+my %opts;
+getopt('c:', \%opts);
+die "Usage: $0 -c /path/to/config.yml\n" unless $opts{c};
+
+my $CONFIG = LoadFile($opts{c});
+
+sub CONFIG { $CONFIG }
+
 use AnyEvent;
 use AnyEvent::IRC::Util qw(prefix_nick);
 use AnyEvent::IRC::Client;
@@ -121,7 +132,11 @@ $IRC_CLIENT->reg_cb(
     },
     registered => sub {
         my ($con) = @_;
-        $con->send_srv (JOIN => '#jabbot');
+        my $channels = CONFIG->{channels};
+        for my $x (@$channels) {
+            my (undef, $channel, $password) = @$x;
+            $con->send_srv('JOIN', '#'.$channel, $password);
+        }
     },
     join => sub {
         my ($con, $nick, $channel) = @_;
@@ -129,7 +144,7 @@ $IRC_CLIENT->reg_cb(
     }
 );
 
-$IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => 'gugod2' });
+$IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => CONFIG->{nick} });
 
 require Tatsumaki::Server;
 Tatsumaki::Server->new(port => 9999)->run($app);
