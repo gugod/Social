@@ -3,93 +3,133 @@ use strict;
 use warnings;
 use 5.010;
 
-use YAML::XS;
-
-use LWP::UserAgent;
-
 use AnyEvent;
 use AnyEvent::IRC::Util qw(prefix_nick);
 use AnyEvent::IRC::Client;
-use JSON qw(to_json);
+use Tatsumaki;
+use Tatsumaki::Error;
+use Tatsumaki::Application;
+use Tatsumaki::HTTPClient;
+use Tatsumaki::MessageQueue;
+use Plack::Middleware::Static;
+use Tatsumaki::Middleware::BlockingFallback;
+use Encode;
 
-sub stardust_send {
-    my ($channel, $nick, $text) = @_;
+my $IRC_CLIENT;
 
-    $channel =~ s/\W//g;
+package ChatMultipartPollHandler;
+use base qw(Tatsumaki::Handler);
+__PACKAGE__->asynchronous(1);
 
-    my $ua = LWP::UserAgent->new;
-    $ua->post(
-        "http://localhost:5555/comet/channel/$channel",
-        Content => "m=". to_json({
-            type => "irc",
-            data => [
-                $nick, $text
-            ]
-        })
-    );
+sub get {
+    my($self, $channel) = @_;
+
+    my $session = $self->request->param('session')
+        or Tatsumaki::Error::HTTP->throw(500, "'session' needed");
+
+    $self->multipart_xhr_push(1);
+
+    my $mq = Tatsumaki::MessageQueue->instance($channel);
+    $mq->poll($session, sub {
+        my @events = @_;
+        for my $event (@events) {
+            $self->stream_write($event);
+        }
+    });
 }
 
-my $c = AnyEvent->condvar;
-my $timer;
-my $con = AnyEvent::IRC::Client->new;
-$con->reg_cb(
-    connect => sub {
-        my ($con, $err) = @_;
-        if (defined $err) {
-            warn "connect error: $err\n";
-            return;
+package ChatPostHandler;
+use base qw(Tatsumaki::Handler);
+use HTML::Entities;
+
+sub post {
+    my($self, $channel) = @_;
+    my $v = $self->request->params;
+    my $text = Encode::decode_utf8($v->{text});
+
+    print "Post to $channel\n";
+    $IRC_CLIENT->send_srv('PRIVMSG', "#" . $channel, $text);
+
+    my $html = $self->format_message($text);
+    my $mq = Tatsumaki::MessageQueue->instance($channel);
+    $mq->publish({
+        type => "message", html => $html, ident => $v->{ident},
+        avatar => $v->{avatar}, name => $v->{name},
+        address => $self->request->address, time => scalar localtime(time),
+    });
+
+    $self->write({ success => 1 });
+}
+
+sub format_message {
+    my($self, $text) = @_;
+    $text =~ s{ (https?://\S+) | ([&<>"']+) }
+              { $1 ? do { my $url = HTML::Entities::encode($1); qq(<a target="_blank" href="$url">$url</a>) } :
+                $2 ? HTML::Entities::encode($2) : '' }egx;
+    $text;
+}
+
+package ChatRoomHandler;
+use base qw(Tatsumaki::Handler);
+
+sub get {
+    my($self, $channel) = @_;
+
+    $IRC_CLIENT->send_srv(JOIN => "#" . $channel);
+
+    $self->render('chat.html');
+}
+
+package main;
+
+use File::Basename;
+
+my $chat_re = '[\w\.\-]+';
+
+my $app = Tatsumaki::Application->new([
+    "/chat/($chat_re)/mxhrpoll" => 'ChatMultipartPollHandler',
+    "/chat/($chat_re)/post" => 'ChatPostHandler',
+    "/chat/($chat_re)" => 'ChatRoomHandler'
+]);
+
+$app->template_path(dirname(__FILE__) . "/templates");
+
+$app = Plack::Middleware::Static->wrap($app, path => qr/^\/static/, root => dirname(__FILE__));
+
+$app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
+
+$IRC_CLIENT = AnyEvent::IRC::Client->new;
+$IRC_CLIENT->reg_cb(
+    disconnect => sub { warn @_; undef $IRC_CLIENT },
+    publicmsg  => sub {
+        my($con, $channel, $packet) = @_;
+        $channel =~ s/\@.*$//;
+        $channel =~ s/^#//;
+        if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') { # NOTICE for bouncer backlog
+            my $msg = $packet->{params}[1];
+            (my $who = $packet->{prefix}) =~ s/\!.*//;
+            my $mq = Tatsumaki::MessageQueue->instance($channel);
+            $mq->publish({
+                type => "message",
+                address => "chat.freenode.net",
+                time => scalar localtime,
+                name => $who,
+                ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
+                text => Encode::decode_utf8($msg),
+            });
         }
     },
-
-    join => sub {
-        my ($con, $nick, $channel, $is_myself) = @_;
-        if ($is_myself) {
-            print "I just joined $channel\n";
-            return;
-        }
-    },
-
     registered => sub {
-        print "I'm in!\n";
+        my ($con) = @_;
         $con->send_srv (JOIN => '#jabbot');
     },
-
-    disconnect => sub { print "I'm out!\n"; $c->broadcast },
-
-    publicmsg => sub {
-        my ($con, $channel, $ircmsg) = @_;
-
-        my $nick = prefix_nick( $ircmsg->{prefix} );
-        my (undef, $text) = @{$ircmsg->{params}};
-
-        stardust_send($channel, $nick, $text);
+    join => sub {
+        my ($con, $nick, $channel) = @_;
+        say "joined $channel";
     }
 );
 
-$con->connect ("chat.freenode.net", 6667, { nick => 'jabbot2' });
+$IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => 'gugod2' });
 
-use AnyEvent::HTTPD;
-
-my $httpd = AnyEvent::HTTPD->new(port => 11236);
-
-$httpd->reg_cb (
-    '/say' => sub {
-        my ($httpd, $req) = @_;
-
-        my $text = $req->parm("text");
-        my $channel = $req->parm("channel");
-
-        print "say $channel, $text\n";
-
-        return $req->respond({ content => ['text/plain', 'NOK'] })
-            unless defined($text) && defined($channel);
-
-        $con->send_srv('PRIVMSG', $channel, $text);
-        stardust_send($channel, $con->nick, $text);
-
-        $req->respond({ content => ['text/plain', 'OK'] });
-    }
-);
-
-$c->wait;
-$con->disconnect;
+require Tatsumaki::Server;
+Tatsumaki::Server->new(port => 9999)->run($app);
