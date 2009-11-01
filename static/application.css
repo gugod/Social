@@ -1,29 +1,33 @@
+body {
+    margin: 5px;
+    height: 100%;
+}
+h1 {
+    font-size: 1.5em;
+}
 #messages {
-  margin: 1em 0;
+    margin: 1em 0;
 }
 .avatar {
-  width: 25px;
-  vertical-align: top;
+    width: 25px;
+    vertical-align: top;
 }
 .avatar img {
-  width: 25px;
-  height: 25px;
-  vertical-align: top;
-  margin-right: 0.5em;
+    width: 25px;
+    height: 25px;
+    vertical-align: top;
+    margin-right: 0.5em;
 }
 .chat-message {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 .chat-message .name {
-  font-weight: bold;
+    font-weight: bold;
 }
 .meta {
-  vertical-align: top;
-  color: #888;
-  font-size: 0.8em;
-}
-body {
-  margin: 5px;
+    vertical-align: top;
+    color: #888;
+    font-size: 0.8em;
 }
 .message .avatar {
     float: left;
@@ -36,10 +40,22 @@ body {
     margin: 0 5px 5px 0;
     padding: 0;
 }
-
 .message .meta {
     display: none;
     height: 25px;
     margin: 0 5px 5px 30px;
     padding: 0;
+}
+#channels {
+    display: none;
+    margin: 0;
+    padding: 5px;
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    width: 50px;
+    background: #fff;
+    width: 250px;
+    border: 1px solid #999;
+    -webkit-box-shadow: 5px 5px 5px #aaa;
 }

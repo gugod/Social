@@ -89,7 +89,7 @@ sub get {
     $IRC_CLIENT->send_srv(JOIN => "#" . $channel)
         unless($IRC_CLIENT->channel_list->{"#".$channel});
 
-    $self->render('chat.html');
+    $self->render('chat.html',{ channels => [map { s/^#//; $_ } keys %{$IRC_CLIENT->channel_list}] });
 }
 
 package ChannelsHandler;
@@ -139,7 +139,7 @@ $IRC_CLIENT->reg_cb(
                 time => scalar localtime,
                 name => $who,
                 ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
-                text => Encode::decode_utf8($msg),
+                html => ChatPostHandler->format_message( Encode::decode_utf8($msg) )
             });
         }
     },
