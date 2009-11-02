@@ -49,6 +49,27 @@ sub get {
     });
 }
 
+package ChatPollHandler;
+use base qw(Tatsumaki::Handler);
+__PACKAGE__->asynchronous(1);
+
+use Tatsumaki::MessageQueue;
+
+sub get {
+    my($self, $channel) = @_;
+    my $mq = Tatsumaki::MessageQueue->instance($channel);
+    my $session = $self->request->param('session')
+        or Tatsumaki::Error::HTTP->throw(500, "'session' needed");
+    $session = rand(1) if $session eq 'dummy'; # for benchmarking stuff
+    $mq->poll_once($session, sub { $self->on_new_event(@_) });
+}
+
+sub on_new_event {
+    my($self, @events) = @_;
+    $self->write(\@events);
+    $self->finish;
+}
+
 package ChatPostHandler;
 use base qw(Tatsumaki::Handler);
 use HTML::Entities;
@@ -111,6 +132,7 @@ my $chat_re = '[\w\.\-]+';
 
 my $app = Tatsumaki::Application->new([
     "/channels/($chat_re)/mxhrpoll" => 'ChatMultipartPollHandler',
+    "/channels/($chat_re)/poll" => 'ChatPollHandler',
     "/channels/($chat_re)/post" => 'ChatPostHandler',
     "/channels/($chat_re)" => 'ChatRoomHandler',
     "/channels" => "ChannelsHandler"
