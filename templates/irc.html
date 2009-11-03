@@ -5,6 +5,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
+        <meta name="apple-mobile-web-app-capable" content="yes">
+
         <title>IRC Chat</title>
         <link rel="stylesheet" href="/static/screen.css" />
         <link rel="stylesheet" href="/static/application.css" />
@@ -30,6 +32,9 @@
             <div class="channel" id="channel-<?= $name->[0] ?>"><ul class="messages"></ul></div>
 ? }
         </div>
+
+        <div style="height:600px">&nbsp</div>
+
         <script src="/static/jquery-1.3.2.min.js"></script>
 ? if ($_[0]->{handler}->request->param('mxhr')) {
         <script src="/static/DUI.js"></script>

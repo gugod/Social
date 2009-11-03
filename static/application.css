@@ -1,7 +1,6 @@
 body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
 }
 h1 {
     font-size: 1.5em;
@@ -90,7 +89,7 @@ form#irc {
     margin: 0 0 1em 0;
     display: block;
     overflow-y: scroll;
-    height: 300px;
+    height: 365px;
     border-bottom: 2px dotted #555;
 }
 #channels-wrapper {
@@ -100,7 +99,7 @@ form#irc {
     top: 50px;
     left: 0;
     width: 100%;
-    height: 300px;
+    height: 366px;
     overflow-y: auto;
     overflow-x: hidden;
 }

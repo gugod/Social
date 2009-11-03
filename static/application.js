@@ -84,11 +84,16 @@ $(function() {
     }
 });
 
-// if (navigator.userAgent.indexOf("iPhone") != -1) {
-//     $(window).bind("scroll", function() {
-//         var win_y = $(window).height();
-//         var scroll_y = $(window).scrollTop();
-//         $("#irc").css({ top: scroll_y });
-//         $("#channels").css({ top: scroll_y + 5 });
-//     });
-// }
+$(window).bind("load", function() {
+    var hide_address_bar_on_iphone = function() {
+        setTimeout(function () {
+            window.scrollTo(0, 1);
+        }, 500);
+    };
+
+    hide_address_bar_on_iphone();
+
+    $("#text").bind("blur", hide_address_bar_on_iphone);
+
+    return false;
+});
