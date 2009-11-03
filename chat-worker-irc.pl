@@ -7,7 +7,7 @@ use YAML qw(LoadFile);
 use Getopt::Std;
 
 my %opts;
-getopt('c:', \%opts);
+getopt('cp:', \%opts);
 die "Usage: $0 -c /path/to/config.yml\n" unless $opts{c};
 
 my $CONFIG = LoadFile($opts{c});
@@ -177,7 +177,7 @@ $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
 }
 
 if ($0 eq __FILE__) {
-    Tatsumaki::Server->new(port => 9999)->run($app);
+    Tatsumaki::Server->new(port => $opts{p} || 9999)->run($app);
 }
 else {
     return $app;
