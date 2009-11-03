@@ -13,9 +13,10 @@
         <h1><a href="/channels">Channels</a></h1>
         <form id="irc">
             <div>
-                <input id="ident" type="hidden" name="<?= $nick ?>"/>
-                <label for="chat">Say:</label>
-                <input id="chat" type="text"/>
+                <input id="ident" type="hidden" name="ident" value="<?= $nick ?>"/>
+                <input id="channel" type="text" name="channel" />
+                <label for="text">Say:</label>
+                <input id="text" name="text" type="text"/>
             </div>
         </form>
         <ul id="messages"></ul>
@@ -24,6 +25,7 @@
           <li><a href="/channels/<?= $name ?>">#<?= $name ?></a></li>
 ? }
         </ul>
+
 
         <div id="footer">Powered by <a href="http://github.com/miyagawa/Tatsumaki">Tatsumaki/<?= $Tatsumaki::VERSION ?></a>.</div>
 
@@ -42,6 +44,7 @@ $(function(){
     $("#chat").focus();
 
     var onNewEvent = function(e) {
+        alert(e);
         try {
             var src    = e.avatar || ("http://www.gravatar.com/avatar/" + $.md5(e.ident || 'foo'));
             var name   = e.name   || e.ident || 'Anonymous';
@@ -78,22 +81,20 @@ $(function(){
         $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
     }
 
-    $("form").bind("submit", function() {
+    $("form#irc").bind("submit", function() {
         var ident = $("#ident").val();
-        var text = $("#chat").val();
+        var text = $("#text").val();
         var channel = $("#channel").val();
 
-        if (!text || !ident || !channel) return;
+        if (!text || !ident || !channel) return false;
 
         $.ajax({
-            url: "/irc/post",
+            url: "/irc",
             data: $(this).serialize(),
             type: 'post',
             dataType: 'json',
-            success: function(r) { }
+            success: function(r) { $("#text").val("").focus(); }
         });
-
-        $("#chat").val("").focus();
         return false;
     });
 });
