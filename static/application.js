@@ -27,6 +27,9 @@ $(function() {
         $("#channels-wrapper").scrollTop( $("#" + channel_el_id).position().top );
         $("#" + channel_el_id).scrollTop(0);
 
+        $("#channels-wrapper .channel").hide();
+        $("#" + channel_el_id).show().scrollTop(0);
+
         return false;
     });
 
@@ -71,15 +74,17 @@ $(function() {
         } catch(e) { if (console) console.log(e) };
     }
 
-    if (typeof DUI != 'undefined') {
-        var s = new DUI.Stream();
-        s.listen('application/json', function(payload) {
-            var event = eval('(' + payload + ')');
-            onNewEvent(event);
-        });
-        s.load('/irc/mpoll?session=' + Date.now() + Math.random());
-    } else {
-        $.ev.handlers.message = onNewEvent;
-        $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
-    }
+    setTimeout(function() {
+        if (typeof DUI != 'undefined') {
+            var s = new DUI.Stream();
+            s.listen('application/json', function(payload) {
+                var event = eval('(' + payload + ')');
+                onNewEvent(event);
+            });
+            s.load('/irc/mpoll?session=' + Date.now() + Math.random());
+        } else {
+            $.ev.handlers.message = onNewEvent;
+            $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
+        }
+    }, 500);
 });
