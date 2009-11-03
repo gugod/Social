@@ -1,0 +1,107 @@
+? my $channels = $_[0]->{channels};
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
+        <title>IRC Chat : <?= $channel ?></title>
+v        <link rel="stylesheet" href="/static/screen.css" />
+        <link rel="stylesheet" href="/static/application.css" />
+    </head>
+    <body>
+        <h1><a href="/channels">Channels</a></h1>
+        <form>
+            <div>Gravatar Email: <input id="ident" type="text" name="ident"/></div>
+            <div>Say: <input id="chat" type="text"/></div>
+        </form>
+        <ul id="messages"></ul>
+
+        <ul id="channels">
+? foreach my $name (@$channels) {
+          <li><a href="/channels/<?= $name ?>">#<?= $name ?></a></li>
+? }
+        </ul>
+
+        <div id="footer">Powered by <a href="http://github.com/miyagawa/Tatsumaki">Tatsumaki/<?= $Tatsumaki::VERSION ?></a>.</div>
+
+        <script src="/static/jquery-1.3.2.min.js"></script>
+? if ($_[0]->{handler}->request->param('mxhr')) {
+        <script src="/static/DUI.js"></script>
+        <script src="/static/Stream.js"></script>
+? } else {
+        <script src="/static/jquery.ev.js"></script>
+? }
+        <script src="/static/jquery.md5.js"></script>
+        <script src="/static/jquery.cookie.js"></script>
+        <script src="/static/jquery.oembed.js"></script>
+        <script type="text/javascript" src="/static/application.js"></script>
+        <script type="text/javascript">
+var cookieName = 'tatsumaki_chat_ident';
+function doPost(el1, el) {
+    var ident = el1.attr('value');
+    if (ident) $.cookie(cookieName, ident, { path: '/' });
+    var text = el.attr('value');
+    if (!text) return;
+    $.ajax({
+        url: "/channels/<?= $channel ?>/post",
+        data: { ident: ident, text: text },
+        type: 'post',
+        dataType: 'json',
+        success: function(r) { }
+    });
+    el.attr('value', '');
+    $("#chat").focus();
+    return;
+}
+
+$(function(){
+    $("#chat").focus();
+
+    var onNewEvent = function(e) {
+        try {
+            var src    = e.avatar || ("http://www.gravatar.com/avatar/" + $.md5(e.ident || 'foo'));
+            var name   = e.name   || e.ident || 'Anonymous';
+            var avatar = $('<img/>').attr('src', src).attr('alt', name);
+
+            if (e.ident) {
+                var link = e.ident.match(/https?:/) ? e.ident : 'mailto:' + e.ident;
+                avatar = $('<a/>').attr('href', link).attr('target', '_blank').append(avatar);
+            }
+            avatar = $('<div/>').addClass('avatar').append(avatar);
+
+            var message = $('<div/>').addClass('chat-message');
+            if (e.text) message.text(e.text);
+            if (e.html) message.html(e.html);
+            message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
+            var name = e.name || (e.ident ? e.ident.split('@')[0] : null);
+            if (name)
+                message.prepend($('<span/>').addClass('name').text(name+ ': '));
+
+            var meta = $('<span/>').addClass('meta').text(' (' + e.time + ' from ' + e.address + ')');
+            $('#messages').prepend($('<li/>').addClass('message').addClass("clearfix").append(avatar).append(message).append(meta));
+        } catch(e) { if (console) console.log(e) };
+    }
+
+    if (typeof DUI != 'undefined') {
+        var s = new DUI.Stream();
+        s.listen('application/json', function(payload) {
+            var event = eval('(' + payload + ')');
+            onNewEvent(event);
+        });
+        s.load('/channels/<?= $channel ?>/mxhrpoll?session=' + Date.now() + Math.random());
+    } else {
+        $.ev.handlers.message = onNewEvent;
+        $.ev.loop('/channels/<?= $channel ?>/poll?session=' + Date.now() + Math.random());
+    }
+
+    if ($.cookie(cookieName))
+        $('#ident').attr('value', $.cookie(cookieName));
+
+    $("form").bind("submit", function() {
+        doPost($('#ident'), $('#chat'));
+        return false;
+    });
+});
+</script>
+    </body>
+</html>

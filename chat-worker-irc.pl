@@ -28,15 +28,26 @@ use Encode;
 
 my $IRC_CLIENT;
 
-package ChatMultipartPollHandler;
+package IrcHandler;
+use base qw(Tatsumaki::Handler);
+
+sub get {
+    my($self) = @_;
+    $self->render('irc.html', { channels => [map { s/^#//; $_ } keys %{$IRC_CLIENT->channel_list}] });
+}
+
+package IrcMultipartPollHandler;
 use base qw(Tatsumaki::Handler);
 __PACKAGE__->asynchronous(1);
 
 sub get {
-    my($self, $channel) = @_;
+    my($self) = @_;
 
     my $session = $self->request->param('session')
         or Tatsumaki::Error::HTTP->throw(500, "'session' needed");
+
+    my $channel = $self->request->param('channel')
+        or Tatsumaki::Error::HTTP->throw(500, "'channel' needed");
 
     $self->multipart_xhr_push(1);
 
@@ -49,18 +60,23 @@ sub get {
     });
 }
 
-package ChatPollHandler;
+package IrcPollHandler;
 use base qw(Tatsumaki::Handler);
 __PACKAGE__->asynchronous(1);
 
 use Tatsumaki::MessageQueue;
 
 sub get {
-    my($self, $channel) = @_;
-    my $mq = Tatsumaki::MessageQueue->instance($channel);
+    my($self) = @_;
+
     my $session = $self->request->param('session')
         or Tatsumaki::Error::HTTP->throw(500, "'session' needed");
     $session = rand(1) if $session eq 'dummy'; # for benchmarking stuff
+
+    my $channel = $self->request->param("channel")
+        or Tatsumaki::Error::HTTP->throw(500, "'channel' needed");
+
+    my $mq = Tatsumaki::MessageQueue->instance($channel);
     $mq->poll_once($session, sub { $self->on_new_event(@_) });
 }
 
@@ -70,22 +86,23 @@ sub on_new_event {
     $self->finish;
 }
 
-package ChatPostHandler;
+package IrcPostHandler;
 use base qw(Tatsumaki::Handler);
-use HTML::Entities;
 
 sub post {
-    my($self, $channel) = @_;
+    my($self) = @_;
     my $v = $self->request->params;
+
+    my $channel = $v->{channel};
     my $text = Encode::decode_utf8($v->{text});
 
-    print "Post to $channel\n";
     $IRC_CLIENT->send_srv('PRIVMSG', "#" . $channel, $v->{text});
 
     my $html = $self->format_message($text);
     my $mq = Tatsumaki::MessageQueue->instance($channel);
     $mq->publish({
         type => "message", html => $html, ident => $v->{ident},
+        channel => $channel,
         avatar => $v->{avatar}, name => $v->{name},
         address => $self->request->address, time => scalar localtime(time),
     });
@@ -101,29 +118,6 @@ sub format_message {
     $text;
 }
 
-package ChatRoomHandler;
-use base qw(Tatsumaki::Handler);
-
-sub get {
-    my($self, $channel) = @_;
-
-    $IRC_CLIENT->send_srv(JOIN => "#" . $channel)
-        unless($IRC_CLIENT->channel_list->{"#".$channel});
-
-    $self->render('chat.html',{ channels => [map { s/^#//; $_ } keys %{$IRC_CLIENT->channel_list}] });
-}
-
-package ChannelsHandler;
-use base qw(Tatsumaki::Handler);
-
-sub get {
-    my($self) = @_;
-
-    $self->render('channels.html', {
-        channels => [map { s/^#//; $_ } keys %{$IRC_CLIENT->channel_list}]
-    });
-}
-
 package main;
 
 use File::Basename;
@@ -131,11 +125,9 @@ use File::Basename;
 my $chat_re = '[\w\.\-]+';
 
 my $app = Tatsumaki::Application->new([
-    "/channels/($chat_re)/mxhrpoll" => 'ChatMultipartPollHandler',
-    "/channels/($chat_re)/poll" => 'ChatPollHandler',
-    "/channels/($chat_re)/post" => 'ChatPostHandler',
-    "/channels/($chat_re)" => 'ChatRoomHandler',
-    "/channels" => "ChannelsHandler"
+    "/irc" => "IrcHandler",
+    "/irc/poll" => "IrcPollHandler",
+    "/irc/post" => "IrcPostHandler",
 ]);
 
 $app->template_path(dirname(__FILE__) . "/templates");
@@ -154,14 +146,15 @@ $IRC_CLIENT->reg_cb(
         if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') { # NOTICE for bouncer backlog
             my $msg = $packet->{params}[1];
             (my $who = $packet->{prefix}) =~ s/\!.*//;
-            my $mq = Tatsumaki::MessageQueue->instance($channel);
+            my $mq = Tatsumaki::MessageQueue->instance("irc");
             $mq->publish({
                 type => "message",
                 address => "chat.freenode.net",
                 time => scalar localtime,
+                channel => $channel,
                 name => $who,
                 ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
-                html => ChatPostHandler->format_message( Encode::decode_utf8($msg) )
+                html => IrcPostHandler->format_message( Encode::decode_utf8($msg) )
             });
         }
     },
