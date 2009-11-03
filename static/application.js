@@ -83,17 +83,3 @@ $(function() {
         $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
     }
 });
-
-$(window).bind("load", function() {
-    var hide_address_bar_on_iphone = function() {
-        setTimeout(function () {
-            window.scrollTo(0, 1);
-        }, 500);
-    };
-
-    hide_address_bar_on_iphone();
-
-    $("#text").bind("blur", hide_address_bar_on_iphone);
-
-    return false;
-});
