@@ -11,7 +11,6 @@ getopt('c:', \%opts);
 die "Usage: $0 -c /path/to/config.yml\n" unless $opts{c};
 
 my $CONFIG = LoadFile($opts{c});
-sub CONFIG { $CONFIG }
 
 use Tatsumaki;
 use Tatsumaki::Error;
@@ -132,6 +131,9 @@ my $app = Tatsumaki::Application->new([
 ]);
 
 $app->template_path(dirname(__FILE__) . "/templates");
+$app->template->{tag_start}  = "<%";
+$app->template->{tag_end}    = "%>";
+$app->template->{line_start} = "%";
 
 $app = Plack::Middleware::Static->wrap($app, path => qr/^\/static/, root => dirname(__FILE__));
 
@@ -160,7 +162,7 @@ $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
         },
         registered => sub {
             my ($con) = @_;
-            my $channels = CONFIG->{channels};
+            my $channels = $CONFIG->{channels};
             for my $x (@$channels) {
                 my (undef, $channel, $password) = @$x;
                 $con->send_srv('JOIN', $channel, $password);
@@ -171,7 +173,12 @@ $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
             say "Joined $channel";
         }
     );
-    $IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => CONFIG->{nick} });
+    $IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => $CONFIG->{nick} });
 }
 
-Tatsumaki::Server->new(port => 9999)->run($app);
+if ($0 eq __FILE__) {
+    Tatsumaki::Server->new(port => 9999)->run($app);
+}
+else {
+    return $app;
+}
