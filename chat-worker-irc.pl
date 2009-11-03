@@ -127,6 +127,7 @@ my $chat_re = '[\w\.\-]+';
 my $app = Tatsumaki::Application->new([
     "/irc" => "IrcHandler",
     "/irc/poll" => "IrcPollHandler",
+    "/irc/mpoll" => "IrcMultipartPollHandler",
     "/irc/post" => "IrcPostHandler",
 ]);
 
