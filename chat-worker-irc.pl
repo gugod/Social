@@ -26,46 +26,48 @@ use AnyEvent;
 use AnyEvent::IRC::Util qw(prefix_nick);
 use AnyEvent::IRC::Client;
 
-my $IRC_CLIENT;
+{
+    my $IRC_CLIENT;
 
-$IRC_CLIENT = AnyEvent::IRC::Client->new;
-$IRC_CLIENT->reg_cb(
-    disconnect => sub { warn @_; undef $IRC_CLIENT },
-    publicmsg  => sub {
-        my($con, $channel, $packet) = @_;
-        $channel =~ s/\@.*$//;
-        $channel =~ s/^#//;
-        if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') { # NOTICE for bouncer backlog
-            my $msg = $packet->{params}[1];
-            (my $who = $packet->{prefix}) =~ s/\!.*//;
-            my $mq = Tatsumaki::MessageQueue->instance("irc");
-            $mq->publish({
-                type => "message",
-                address => "chat.freenode.net",
-                time => scalar localtime,
-                channel => $channel,
-                name => $who,
-                ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
-                html => IrcPostHandler->format_message( Encode::decode_utf8($msg) )
-            });
+    $IRC_CLIENT = AnyEvent::IRC::Client->new;
+    $IRC_CLIENT->reg_cb(
+        disconnect => sub { warn @_; undef $IRC_CLIENT },
+        publicmsg  => sub {
+            my($con, $channel, $packet) = @_;
+            $channel =~ s/\@.*$//;
+            $channel =~ s/^#//;
+            if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') { # NOTICE for bouncer backlog
+                my $msg = $packet->{params}[1];
+                (my $who = $packet->{prefix}) =~ s/\!.*//;
+                my $mq = Tatsumaki::MessageQueue->instance("irc");
+                $mq->publish({
+                    type => "message",
+                    address => "chat.freenode.net",
+                    time => scalar localtime,
+                    channel => $channel,
+                    name => $who,
+                    ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
+                    html => IrcPostHandler->format_message( Encode::decode_utf8($msg) )
+                });
+            }
+        },
+        registered => sub {
+            my ($con) = @_;
+            my $channels = CONFIG->{channels};
+            for my $x (@$channels) {
+                my (undef, $channel, $password) = @$x;
+                $con->send_srv('JOIN', '#'.$channel, $password);
+            }
+        },
+        join => sub {
+            my ($con, $nick, $channel) = @_;
+            say "Joined $channel";
         }
-    },
-    registered => sub {
-        my ($con) = @_;
-        my $channels = CONFIG->{channels};
-        for my $x (@$channels) {
-            my (undef, $channel, $password) = @$x;
-            $con->send_srv('JOIN', '#'.$channel, $password);
-        }
-    },
-    join => sub {
-        my ($con, $nick, $channel) = @_;
-        say "joined $channel";
-    }
-);
-$IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => CONFIG->{nick} });
+    );
+    $IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => CONFIG->{nick} });
 
-sub IRC_CLIENT { $IRC_CLIENT }
+    sub IRC_CLIENT { $IRC_CLIENT }
+}
 
 package IrcHandler;
 use base qw(Tatsumaki::Handler);
