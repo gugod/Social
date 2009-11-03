@@ -26,9 +26,8 @@ use AnyEvent;
 use AnyEvent::IRC::Util qw(prefix_nick);
 use AnyEvent::IRC::Client;
 
+my $IRC_CLIENT;
 {
-    my $IRC_CLIENT;
-
     $IRC_CLIENT = AnyEvent::IRC::Client->new;
     $IRC_CLIENT->reg_cb(
         disconnect => sub { warn @_; undef $IRC_CLIENT },
@@ -73,8 +72,12 @@ package IrcHandler;
 use base qw(Tatsumaki::Handler);
 
 sub get {
-    my($self) = @_;
-    $self->render('irc.html', { channels => [map { s/^#//; $_ } keys %{IRC_CLIENT->channel_list}] });
+    my ($self) = @_;
+
+    $self->render('irc.html', {
+        channels => [map { s/^#//; $_ } keys %{ $IRC_CLIENT->channel_list} ],
+        nick => $IRC_CLIENT->nick,
+    });
 }
 
 package IrcMultipartPollHandler;
@@ -137,7 +140,7 @@ sub post {
     my $channel = $v->{channel};
     my $text = Encode::decode_utf8($v->{text});
 
-    IRC_CLIENT->send_srv('PRIVMSG', "#" . $channel, $v->{text});
+    $IRC_CLIENT->send_srv('PRIVMSG', "#" . $channel, $v->{text});
 
     my $html = $self->format_message($text);
     my $mq = Tatsumaki::MessageQueue->instance($channel);

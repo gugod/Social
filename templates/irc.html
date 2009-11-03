@@ -1,21 +1,24 @@
 ? my $channels = $_[0]->{channels};
+? my $nick = $_[0]->{nick};
 <!doctype html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;" />
-        <title>IRC Chat : <?= $channel ?></title>
-v        <link rel="stylesheet" href="/static/screen.css" />
+        <title>IRC Chat</title>
+        <link rel="stylesheet" href="/static/screen.css" />
         <link rel="stylesheet" href="/static/application.css" />
     </head>
     <body>
         <h1><a href="/channels">Channels</a></h1>
-        <form>
-            <div>Gravatar Email: <input id="ident" type="text" name="ident"/></div>
-            <div>Say: <input id="chat" type="text"/></div>
+        <form id="irc">
+            <div>
+                <input id="ident" type="hidden" name="<?= $nick ?>"/>
+                <label for="chat">Say:</label>
+                <input id="chat" type="text"/>
+            </div>
         </form>
         <ul id="messages"></ul>
-
         <ul id="channels">
 ? foreach my $name (@$channels) {
           <li><a href="/channels/<?= $name ?>">#<?= $name ?></a></li>
@@ -32,28 +35,9 @@ v        <link rel="stylesheet" href="/static/screen.css" />
         <script src="/static/jquery.ev.js"></script>
 ? }
         <script src="/static/jquery.md5.js"></script>
-        <script src="/static/jquery.cookie.js"></script>
         <script src="/static/jquery.oembed.js"></script>
         <script type="text/javascript" src="/static/application.js"></script>
         <script type="text/javascript">
-var cookieName = 'tatsumaki_chat_ident';
-function doPost(el1, el) {
-    var ident = el1.attr('value');
-    if (ident) $.cookie(cookieName, ident, { path: '/' });
-    var text = el.attr('value');
-    if (!text) return;
-    $.ajax({
-        url: "/channels/<?= $channel ?>/post",
-        data: { ident: ident, text: text },
-        type: 'post',
-        dataType: 'json',
-        success: function(r) { }
-    });
-    el.attr('value', '');
-    $("#chat").focus();
-    return;
-}
-
 $(function(){
     $("#chat").focus();
 
@@ -88,17 +72,28 @@ $(function(){
             var event = eval('(' + payload + ')');
             onNewEvent(event);
         });
-        s.load('/channels/<?= $channel ?>/mxhrpoll?session=' + Date.now() + Math.random());
+        s.load('/irc/mpoll?session=' + Date.now() + Math.random());
     } else {
         $.ev.handlers.message = onNewEvent;
-        $.ev.loop('/channels/<?= $channel ?>/poll?session=' + Date.now() + Math.random());
+        $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
     }
 
-    if ($.cookie(cookieName))
-        $('#ident').attr('value', $.cookie(cookieName));
-
     $("form").bind("submit", function() {
-        doPost($('#ident'), $('#chat'));
+        var ident = $("#ident").val();
+        var text = $("#chat").val();
+        var channel = $("#channel").val();
+
+        if (!text || !ident || !channel) return;
+
+        $.ajax({
+            url: "/irc/post",
+            data: $(this).serialize(),
+            type: 'post',
+            dataType: 'json',
+            success: function(r) { }
+        });
+
+        $("#chat").val("").focus();
         return false;
     });
 });
