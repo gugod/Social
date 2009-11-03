@@ -23,8 +23,10 @@ $(function() {
         $("#channel").val( $(this).text() );
 
         var channel_el_id = this.href.replace(/^.+#/, "");
-        $(window).scrollTop( $("#" + channel_el_id).offset().top - 50 );
-        $(window).trigger("scroll");
+
+        $("#channels-wrapper").scrollTop( $("#" + channel_el_id).position().top );
+        $("#" + channel_el_id).scrollTop(0);
+
         return false;
     });
 
@@ -52,7 +54,7 @@ $(function() {
             var message = $('<div/>').addClass('chat-message');
             if (e.text) message.text(e.text);
             if (e.html) message.html(e.html);
-            message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
+            message.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
             var name = e.name || (e.ident ? e.ident.split('@')[0] : null);
             if (name)
                 message.prepend($('<span/>').addClass('name').text(name+ ': '));
@@ -62,7 +64,7 @@ $(function() {
             var channel_el_id = "channel-" + e.channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
 
             if ($("#" + channel_el_id).size() == 0) {
-                $("<div/>").appendTo("#channels-wraper").attr({ "id": channel_el_id, "class": "channel" }).html("<ul class='messages'></ul>");
+                $("<div/>").appendTo("#channels-wrapper").attr({ "id": channel_el_id, "class": "channel" }).html("<ul class='messages'></ul>");
             }
 
             $('.messages', "#" + channel_el_id).prepend($('<li/>').addClass('message').addClass("clearfix").append(avatar).append(message).append(meta));
@@ -82,11 +84,11 @@ $(function() {
     }
 });
 
-if (navigator.userAgent.indexOf("iPhone") != -1) {
-    $(window).bind("scroll", function() {
-        var win_y = $(window).height();
-        var scroll_y = $(window).scrollTop();
-        $("#irc").css({ top: scroll_y });
-        $("#channels").css({ top: scroll_y + 5 });
-    });
-}
+// if (navigator.userAgent.indexOf("iPhone") != -1) {
+//     $(window).bind("scroll", function() {
+//         var win_y = $(window).height();
+//         var scroll_y = $(window).scrollTop();
+//         $("#irc").css({ top: scroll_y });
+//         $("#channels").css({ top: scroll_y + 5 });
+//     });
+// }

@@ -1,6 +1,7 @@
 body {
-    margin: 5px;
-    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 h1 {
     font-size: 1.5em;
@@ -50,13 +51,15 @@ h1 {
     display: none;
     margin: 0;
     padding: 5px;
-    position: fixed;
+    z-index: 100;
+    position: absolute;
     top: 5px;
     left: 5px;
     width: 50px;
     background: #fff;
     width: 250px;
     border: 1px solid #999;
+
     -webkit-box-shadow: 5px 5px 5px #aaa;
 }
 #channels a {
@@ -69,29 +72,33 @@ h1 {
     background: #aaa;
 }
 form#irc {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 90%;
     height: 40px;
     line-height: 40px;
     background: #eee;
     padding: 0 0 0 1em;
-    -webkit-box-shadow: 5px 5px 5px #555;
+    -webkit-box-shadow: 0px 0px 5px #555;
 }
 #channel {
     width: 6em;
 }
 .channel {
-    padding: 10px 0;
+    padding: 0;
+    margin: 0 0 100em 0;
     display: block !important;
-    border: 1px solid #555;
-    overflow-y: auto;
-    width: 300px;
-    height: 330px;
-    margin: 0px 5px 5px 0;
-    -webkit-box-shadow: 5px 0px 5px #555;
+    overflow-y: scroll;
+    height: 300px;
 }
-#channels-wraper {
-    margin: 50px 0 0 0;
+#channels-wrapper {
+    margin: 0;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 90%;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
