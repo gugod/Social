@@ -10,22 +10,20 @@
         <link rel="stylesheet" href="/static/application.css" />
     </head>
     <body>
-        <h1><a href="/channels">Channels</a></h1>
         <form id="irc">
             <div>
-                <input id="ident" type="hidden" name="ident" value="<?= $nick ?>"/>
-                <input id="channel" type="text" name="channel" />
+                <input id="ident" type="hidden" name="ident" value="<?= $nick ?>" />
+                <input id="channel" type="text" name="channel" readonly="readonly" />
                 <label for="text">Say:</label>
                 <input id="text" name="text" type="text"/>
             </div>
         </form>
-        <ul id="messages"></ul>
-        <ul id="channels">
-? foreach my $name (@$channels) {
-          <li><a href="/channels/<?= $name ?>">#<?= $name ?></a></li>
-? }
-        </ul>
 
+        <ul id="channels">
+    <? foreach my $name (map { my $o = $_; $_ = lc($_); s/([^0-9a-z])/ord($1)/eg; [$_, $o]; } @$channels) { ?>
+            <li><a href="/irc#channel-<?= $name->[0] ?>"><?= $name->[1] ?></a></li>
+            <? } ?>
+        </ul>
 
         <div id="footer">Powered by <a href="http://github.com/miyagawa/Tatsumaki">Tatsumaki/<?= $Tatsumaki::VERSION ?></a>.</div>
 
@@ -41,7 +39,7 @@
         <script type="text/javascript" src="/static/application.js"></script>
         <script type="text/javascript">
 $(function(){
-    $("#chat").focus();
+    $("#text").focus();
 
     var onNewEvent = function(e) {
         try {
@@ -64,7 +62,14 @@ $(function(){
                 message.prepend($('<span/>').addClass('name').text(name+ ': '));
 
             var meta = $('<span/>').addClass('meta').text(' (' + e.time + ' from ' + e.address + ')');
-            $('#messages').prepend($('<li/>').addClass('message').addClass("clearfix").append(avatar).append(message).append(meta));
+
+            var channel_el_id = "channel-" + e.channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
+
+            if ($("#" + channel_el_id).size() == 0) {
+                $("<div/>").insertAfter("#channels").attr({ "id": channel_el_id, "class": "channel" }).html("<ul class='messages'></ul>");
+            }
+
+            $('.messages', "#" + channel_el_id).prepend($('<li/>').addClass('message').addClass("clearfix").append(avatar).append(message).append(meta));
         } catch(e) { if (console) console.log(e) };
     }
 
@@ -74,10 +79,10 @@ $(function(){
             var event = eval('(' + payload + ')');
             onNewEvent(event);
         });
-        s.load('/irc/mpoll?session=' + Date.now());
+        s.load('/irc/mpoll?session=' + Date.now() + Math.random());
     } else {
         $.ev.handlers.message = onNewEvent;
-        $.ev.loop('/irc/poll?session=' + Date.now());
+        $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
     }
 
     $("form#irc").bind("submit", function() {

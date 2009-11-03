@@ -33,7 +33,7 @@ sub get {
     my ($self) = @_;
 
     $self->render('irc.html', {
-        channels => [map { s/^#//; $_ } keys %{ $IRC_CLIENT->channel_list} ],
+        channels => [sort keys %{ $IRC_CLIENT->channel_list} ],
         nick => $IRC_CLIENT->nick,
     });
 }
@@ -143,8 +143,6 @@ $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
         disconnect => sub { warn @_; undef $IRC_CLIENT },
         publicmsg  => sub {
             my($con, $channel, $packet) = @_;
-            $channel =~ s/\@.*$//;
-            $channel =~ s/^#//;
             if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') { # NOTICE for bouncer backlog
                 my $msg = $packet->{params}[1];
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
@@ -166,7 +164,7 @@ $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
             my $channels = CONFIG->{channels};
             for my $x (@$channels) {
                 my (undef, $channel, $password) = @$x;
-                $con->send_srv('JOIN', '#'.$channel, $password);
+                $con->send_srv('JOIN', $channel, $password);
             }
         },
         join => sub {
