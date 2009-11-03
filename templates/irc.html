@@ -44,7 +44,6 @@ $(function(){
     $("#chat").focus();
 
     var onNewEvent = function(e) {
-        alert(e);
         try {
             var src    = e.avatar || ("http://www.gravatar.com/avatar/" + $.md5(e.ident || 'foo'));
             var name   = e.name   || e.ident || 'Anonymous';
@@ -75,10 +74,10 @@ $(function(){
             var event = eval('(' + payload + ')');
             onNewEvent(event);
         });
-        s.load('/irc/mpoll?session=' + Date.now() + Math.random());
+        s.load('/irc/mpoll?session=' + Date.now());
     } else {
         $.ev.handlers.message = onNewEvent;
-        $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
+        $.ev.loop('/irc/poll?session=' + Date.now());
     }
 
     $("form#irc").bind("submit", function() {

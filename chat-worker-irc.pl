@@ -100,7 +100,7 @@ __PACKAGE__->asynchronous(1);
 use Tatsumaki::MessageQueue;
 
 sub get {
-    my($self) = @_;
+    my ($self) = @_;
 
     my $session = $self->request->param('session')
         or Tatsumaki::Error::HTTP->throw(500, "'session' needed");
@@ -126,9 +126,9 @@ use File::Basename;
 my $chat_re = '[\w\.\-]+';
 
 my $app = Tatsumaki::Application->new([
-    "/irc" => "IrcHandler",
+    "/irc/mpoll" => "IrcMultipartPollHandler",
     "/irc/poll" => "IrcPollHandler",
-    "/irc/mpoll" => "IrcMultipartPollHandler"
+    "/irc" => "IrcHandler",
 ]);
 
 $app->template_path(dirname(__FILE__) . "/templates");
