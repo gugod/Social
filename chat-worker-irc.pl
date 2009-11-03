@@ -156,7 +156,6 @@ $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
                     ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
                     html => IrcHandler->format_message( Encode::decode_utf8($msg) )
                 });
-                say "Got irc message: $who : $msg";
             }
         },
         registered => sub {
