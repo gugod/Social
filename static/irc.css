@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    font-size: 1.5em;
+}
+#messages {
+    margin: 1em 0;
+}
+.avatar {
+    width: 25px;
+    vertical-align: top;
+}
+.avatar img {
+    width: 25px;
+    height: 25px;
+    vertical-align: top;
+    margin-right: 0.5em;
+}
+.chat-message {
+    vertical-align: middle;
+}
+.chat-message .name {
+    font-weight: bold;
+}
+.meta {
+    vertical-align: top;
+    color: #888;
+    font-size: 0.8em;
+}
+.message .avatar {
+    float: left;
+    margin: 0 5px 5px 0;
+    padding: 0;
+}
+.message .chat-message {
+    line-height: 15px;
+    min-height: 30px;
+    margin: 0 5px 5px 0;
+    padding: 0;
+}
+.message .meta {
+    display: none;
+    height: 25px;
+    margin: 0 5px 5px 30px;
+    padding: 0;
+}
+#channels {
+    display: none;
+    margin: 0;
+    padding: 5px;
+    z-index: 100;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 50px;
+    background: #fff;
+    width: 250px;
+    border: 1px solid #999;
+
+    -webkit-box-shadow: 5px 5px 5px #aaa;
+}
+#channels a {
+    display: block;
+    font-size: 1.5em;
+    padding: 0.25em;
+    line-height: 2em;
+}
+#channels a:hover {
+    background: #aaa;
+}
+form#irc {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 310px;
+    height: 40px;
+    line-height: 40px;
+    background: #eee;
+    padding: 0 0 0 10px;
+    -webkit-box-shadow: -5px 5px 5px #aaa;
+}
+#channel {
+    width: 6em;
+}
+.channel {
+    display: none;v
+    padding: 0;
+    margin: 0;
+}
+#channels-wrapper {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 100%;
+    min-height: 366px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
