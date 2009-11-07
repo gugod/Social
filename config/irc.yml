@@ -1,0 +1,8 @@
+nick: chat_demo
+networks:
+  freenode:
+    hostname: chat.freenode.net
+    port: 6667
+channels:
+  - [freenode, "#jabbot"]
+  - [freenode, "#test"]
