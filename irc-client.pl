@@ -134,9 +134,19 @@ $app = Plack::Middleware::Static->wrap($app, path => qr/^\/static/, root => dirn
 
 $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
 
-$IRC_CLIENT = Social::IRCClient->new;
-$IRC_CLIENT->config($CONFIG);
-$IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => $CONFIG->{nick} });
+my %IRC_CLIENT = ();
+while (my ($network, $config) = each %{$CONFIG->{networks}}) {
+    my $x = Social::IRCClient->new;
+    $x->heap->{config} = $config;
+
+    require YAML;
+    print YAML::Dump({ heap => $x->heap });
+
+    $x->connect( $config->{host}, $config->{port} || 6667, { nick => $CONFIG->{nick} });
+
+    $IRC_CLIENT{$network} = $x;
+    $IRC_CLIENT = $x;
+}
 
 if ($0 eq __FILE__) {
     Tatsumaki::Server->new(

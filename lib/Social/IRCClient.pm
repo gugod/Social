@@ -5,17 +5,11 @@ use base 'AnyEvent::IRC::Client';
 use Tatsumaki::MessageQueue;
 use Social::Helpers;
 
-my $config;
-sub config {
-    my ($self, $x) = @_;
-    $config = $x if defined $x;
-    return $config;
-}
-
 sub new {
     my ($class) = @_;
     my $self = AnyEvent::IRC::Client->new;
     bless $self, $class;
+
     $self->reg_cb(
         publicmsg  => sub {
             my($con, $channel, $packet) = @_;
@@ -35,17 +29,26 @@ sub new {
                 });
             }
         },
+
         registered => sub {
             my ($con) = @_;
-            my $channels = $con->config->{channels};
+            my $channels = $con->heap->{config}{channels};
+
             for my $x (@$channels) {
-                my (undef, $channel, $password) = @$x;
+                my ($channel, $password) =
+                    (ref($x) eq 'ARRAY') ? @$x
+                        : !ref($x) ? $x
+                            : die("Don't understand the value $x");
+
+                $channel =~ s/^(?![&#!+])/#/;
+
                 $con->send_srv('JOIN', $channel, $password);
             }
         },
+
         join => sub {
             my ($con, $nick, $channel) = @_;
-            print "Joined $channel\n";
+            print "$nick joined $channel\n";
         }
     );
 
