@@ -3,6 +3,9 @@ use strict;
 use warnings;
 use 5.010;
 
+use FindBin;
+use lib "$FindBin::Bin/lib";
+
 use YAML qw(LoadFile);
 use Getopt::Std;
 
@@ -11,6 +14,9 @@ getopt('cph', \%opts);
 die "Usage: $0 -c /path/to/config.yml\n" unless $opts{c};
 
 my $CONFIG = LoadFile($opts{c});
+
+use Social::IRCClient;
+use Social::Helpers;
 
 use Tatsumaki;
 use Tatsumaki::Error;
@@ -47,7 +53,7 @@ sub post {
 
     $IRC_CLIENT->send_srv('PRIVMSG', $channel, $v->{text});
 
-    my $html = $self->format_message($text);
+    my $html = Social::Helpers->format_message($text);
     my $mq = Tatsumaki::MessageQueue->instance("irc");
     $mq->publish({
         type => "message",
@@ -61,14 +67,6 @@ sub post {
     });
 
     $self->write({ success => 1 });
-}
-
-sub format_message {
-    my($self, $text) = @_;
-    $text =~ s{ (https?://\S+) | ([&<>"']+) }
-              { $1 ? do { my $url = HTML::Entities::encode($1); qq(<a target="_blank" href="$url">$url</a>) } :
-                $2 ? HTML::Entities::encode($2) : '' }egx;
-    $text;
 }
 
 package IrcMultipartPollHandler;
@@ -117,9 +115,6 @@ sub on_new_event {
 
 package main;
 
-use AnyEvent;
-use AnyEvent::IRC::Util qw(prefix_nick);
-use AnyEvent::IRC::Client;
 use File::Basename;
 
 my $chat_re = '[\w\.\-]+';
@@ -139,42 +134,9 @@ $app = Plack::Middleware::Static->wrap($app, path => qr/^\/static/, root => dirn
 
 $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
 
-{
-    $IRC_CLIENT = AnyEvent::IRC::Client->new;
-    $IRC_CLIENT->reg_cb(
-        disconnect => sub { warn @_; undef $IRC_CLIENT },
-        publicmsg  => sub {
-            my($con, $channel, $packet) = @_;
-            if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') { # NOTICE for bouncer backlog
-                my $msg = $packet->{params}[1];
-                (my $who = $packet->{prefix}) =~ s/\!.*//;
-                my $mq = Tatsumaki::MessageQueue->instance("irc");
-                $mq->publish({
-                    type => "message",
-                    address => "chat.freenode.net",
-                    time => scalar localtime,
-                    channel => $channel,
-                    name => $who,
-                    ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
-                    html => IrcHandler->format_message( Encode::decode_utf8($msg) )
-                });
-            }
-        },
-        registered => sub {
-            my ($con) = @_;
-            my $channels = $CONFIG->{channels};
-            for my $x (@$channels) {
-                my (undef, $channel, $password) = @$x;
-                $con->send_srv('JOIN', $channel, $password);
-            }
-        },
-        join => sub {
-            my ($con, $nick, $channel) = @_;
-            say "Joined $channel";
-        }
-    );
-    $IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => $CONFIG->{nick} });
-}
+$IRC_CLIENT = Social::IRCClient->new;
+$IRC_CLIENT->config($CONFIG);
+$IRC_CLIENT->connect("chat.freenode.net", 6667, { nick => $CONFIG->{nick} });
 
 if ($0 eq __FILE__) {
     Tatsumaki::Server->new(
