@@ -139,9 +139,6 @@ while (my ($network, $config) = each %{$CONFIG->{networks}}) {
     my $x = Social::IRCClient->new;
     $x->heap->{config} = $config;
 
-    require YAML;
-    print YAML::Dump({ heap => $x->heap });
-
     $x->connect( $config->{host}, $config->{port} || 6667, { nick => $CONFIG->{nick} });
 
     $IRC_CLIENT{$network} = $x;
