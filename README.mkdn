@@ -1,0 +1,30 @@
+Social
+======
+
+Installing
+----------
+
+Social is implemented with Perl, you do not need to install itself to
+get it working, but it requires following CPAN modules to be
+installed:
+
+- YAML
+- AnyEvent::IRC
+- FindBin
+- HTML::Entities
+- Plack
+- Plack::Request
+
+Besides those, it also requires
+[Tatsumaki](http://github.com/miyagawa/Tatsumaki) on github.
+
+Running IRC Client
+------------------
+
+Running the IRC Client program requires you to specify the config file
+path.
+
+    perl ./irc-client.pl -c /path/to/config.yml
+
+See config/irc.yml for the example and description of the configrable
+content.
