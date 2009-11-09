@@ -48,10 +48,6 @@ $(function() {
             var name   = e.name   || e.ident || 'Anonymous';
             var avatar = $('<img/>').attr('src', src).attr('alt', name);
 
-            if (e.ident) {
-                var link = e.ident.match(/https?:/) ? e.ident : 'mailto:' + e.ident;
-                avatar = $('<a/>').attr('href', link).attr('target', '_blank').append(avatar);
-            }
             avatar = $('<div/>').addClass('avatar').append(avatar);
 
             var message = $('<div/>').addClass('chat-message');
