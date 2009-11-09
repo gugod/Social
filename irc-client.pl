@@ -29,6 +29,8 @@ use Plack::Middleware::Static;
 use Encode;
 use HTML::Entities;
 
+$Tatsumaki::MessageQueue::BacklogLength = $CONFIG->{MessageQueueBacklogLength} || 1000;
+
 my $IRC_CLIENT;
 
 package IrcHandler;
