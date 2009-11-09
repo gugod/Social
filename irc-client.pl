@@ -33,7 +33,15 @@ $Tatsumaki::MessageQueue::BacklogLength = $CONFIG->{MessageQueueBacklogLength} |
 
 my $IRC_CLIENT;
 
-package IrcHandler;
+package WelcomeController;
+use base qw(Tatsumaki::Handler);
+
+sub get {
+    my ($self) = @_;
+    $self->render('welcome.html');
+}
+
+package IrcController;
 use base qw(Tatsumaki::Handler);
 
 sub get {
@@ -71,7 +79,7 @@ sub post {
     $self->write({ success => 1 });
 }
 
-package IrcMultipartPollHandler;
+package IrcMultipartPollController;
 use base qw(Tatsumaki::Handler);
 __PACKAGE__->asynchronous(1);
 
@@ -92,7 +100,7 @@ sub get {
     });
 }
 
-package IrcPollHandler;
+package IrcPollController;
 use base qw(Tatsumaki::Handler);
 __PACKAGE__->asynchronous(1);
 
@@ -122,9 +130,10 @@ use File::Basename;
 my $chat_re = '[\w\.\-]+';
 
 my $app = Tatsumaki::Application->new([
-    "/irc/mpoll" => "IrcMultipartPollHandler",
-    "/irc/poll" => "IrcPollHandler",
-    "/irc" => "IrcHandler",
+    "/irc/mpoll" => "IrcMultipartPollController",
+    "/irc/poll" => "IrcPollController",
+    "/irc" => "IrcController",
+    "/" => "WelcomeController"
 ]);
 
 $app->template_path(dirname(__FILE__) . "/templates");
