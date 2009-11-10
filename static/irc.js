@@ -2,12 +2,6 @@ if (navigator.standalone) {
     $("body").addClass("full-screen");
 }
 
-function scroll_to_bottom() {
-    setTimeout(function() {
-        $("#channels-wrapper").scrollTop( $("#channels-wrapper").get(0).scrollHeight );
-    }, 300);
-}
-
 if (navigator.userAgent.indexOf("iPhone") != -1) {
     window.onorientationchange = function() {
         if (window.orientation == 0 || window.orientation == 180) {
@@ -16,7 +10,6 @@ if (navigator.userAgent.indexOf("iPhone") != -1) {
         else {
             $("body").addClass("landscape");
         }
-        scroll_to_bottom();
     };
     window.onorientationchange();
 }
@@ -56,8 +49,7 @@ Social.Irc.append_event_line = function(e, message_body) {
         .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
         .append($message);
 
-    $channel_div_for(e.channel).append( $line );
-    scroll_to_bottom();
+    $channel_div_for(e.channel).prepend( $line );
 
     return $line;
 };
@@ -89,9 +81,7 @@ Social.Irc.Handlers = {
             .append( $('<span/>').addClass('sender').text(name + ": ") )
             .append($message);
 
-        $channel_div_for(e.channel).append( $line );
-
-        scroll_to_bottom();
+        $channel_div_for(e.channel).prepend( $line );
     }
 };
 
@@ -110,7 +100,6 @@ $(function() {
             dataType: 'json',
             success: function(r) {
                 $("#text").val("").focus();
-                $("#channels-wrapper").scrollTop(599999);
             }
         });
         return false;
@@ -119,7 +108,6 @@ $(function() {
     $("select[name=channel]").bind("change", function() {
         $("#channels-wrapper .channel").hide();
         $channel_div_for( $(this).val() ).show();
-        scroll_to_bottom();
         return false;
     });
     $("select[name=channel]").val( $("select[name=channels] option:first").val() );
@@ -150,13 +138,7 @@ $(function() {
 
             $line.append($message);
 
-            $channel_div_for(e.channel).append( $line );
-
-            setTimeout(function() {
-                $("#channels-wrapper").scrollTop( $("#channels-wrapper").get(0).scrollHeight );
-                // $("#channels-wrapper").stop();
-                // $("#channels-wrapper").animate({ "scrollTop": $("#channels-wrapper").get(0).scrollHeight });
-            }, 300);
+            $channel_div_for(e.channel).prepend( $line );
         } catch(e) { if (console) console.log(e) };
     }
 
