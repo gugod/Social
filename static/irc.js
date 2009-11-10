@@ -143,14 +143,14 @@ $(function() {
     }
 
     setTimeout(function() {
-        if (typeof DUI != 'undefined' && navigator.userAgent.indexOf("iPhone") == -1) {
-            var s = new DUI.Stream();
-            s.listen('application/json', function(payload) {
-                onNewEvent(eval('(' + payload + ')'));
-            });
-            s.load('/irc/mpoll?session=' + Date.now());
-        } else {
-            $.ev.loop('/irc/poll?session=' + Date.now(), Social.Irc.Handlers);
-        }
+        var s = new DUI.Stream();
+        s.listen('application/json', function(payload) {
+            var e = eval('(' + payload + ')');
+            var f = Social.Irc.Handlers[e.type];
+            if ($.isFunction(f)) {
+                f(e);
+            }
+        });
+        s.load('/irc/mpoll?session=' + Date.now());
     }, 500);
 });
