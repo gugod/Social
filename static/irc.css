@@ -9,6 +9,8 @@ body {
     width: 320px;
     height: 356px;
     overflow: hidden;
+
+    -webkit-text-size-adjust: none;
 }
 
 h1 {
@@ -92,7 +94,7 @@ h1 {
     z-index: 5;
     margin: 0;
     padding: 0;
-    bottom: 50px;
+    top: 0;
     left: 0;
     height: 300px;
     width: 100%;
@@ -100,9 +102,28 @@ h1 {
     overflow-x: hidden;
 }
 
+body.landscape {
+    width: 480px;
+    height: 216px;
+}
+body.landscape #channels-wrapper {
+    height: 166px;
+}
+
+body.landscape #irc input[name=text] {
+    width: 300px;
+}
+
 body.full-screen {
     height: 460px;
 }
 body.full-screen #channels-wrapper {
     height: 404px;
+}
+
+body.full-screen.landscape {
+    height: 300px;
+}
+body.full-screen.landscape #channels-wrapper {
+    height: 250px;
 }

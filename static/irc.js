@@ -2,6 +2,22 @@ if (navigator.standalone) {
     $("body").addClass("full-screen");
 }
 
+function scroll_to_bottom() {
+    setTimeout(function() {
+        $("#channels-wrapper").scrollTop( $("#channels-wrapper").get(0).scrollHeight );
+    }, 300);
+}
+
+window.onorientationchange = function() {
+    if (window.orientation == 0 || window.orientation == 180) {
+        $("body").removeClass("landscape");
+    }
+    else {
+        $("body").addClass("landscape");
+    }
+    scroll_to_bottom();
+};
+window.onorientationchange();
 
 function padzero(x) {
     if (x < 10) return "0" + x;
@@ -11,18 +27,11 @@ function padzero(x) {
 var Social = {};
 Social.Irc = {};
 
-function scroll_to_bottom() {
-    setTimeout(function() {
-        $("#channels-wrapper").scrollTop( $("#channels-wrapper").get(0).scrollHeight );
-    }, 300);
-}
-
 function time_text(x) {
     var t = new Date( Date.parse(x) );
     var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
     return time_text;
 }
-
 
 var $channel_div_for = function(channel) {
     var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
