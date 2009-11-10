@@ -26,6 +26,7 @@ use Tatsumaki::MessageQueue;
 use Tatsumaki::Server;
 use Tatsumaki::Middleware::BlockingFallback;
 use Plack::Middleware::Static;
+use Plack::Middleware::AccessLog;
 use Encode;
 use HTML::Entities;
 
@@ -144,6 +145,7 @@ $app->template->{line_start} = "%";
 $app = Plack::Middleware::Static->wrap($app, path => qr/^\/static/, root => dirname(__FILE__));
 
 $app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
+$app = Plack::Middleware::AccessLog->wrap($app);
 
 my %IRC_CLIENT = ();
 while (my ($network, $config) = each %{$CONFIG->{networks}}) {
