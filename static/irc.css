@@ -31,30 +31,6 @@ h1 {
     font-weight: bold;
 }
 
-#channels {
-    display: none;
-    margin: 0;
-    padding: 5px;
-    z-index: 100;
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
-    width: 50px;
-    background: #fff;
-    width: 290px;
-    border: 1px solid #999;
-
-    -webkit-box-shadow: 5px 5px 5px #aaa;
-}
-#channels a {
-    display: block;
-    font-size: 1.414em;
-    padding: 0.25em;
-}
-#channels a:hover {
-    background: #aaa;
-}
-
 #irc {
     position: absolute;
     z-index: 10;
@@ -71,7 +47,7 @@ h1 {
     /* -webkit-box-shadow: 0px -5px 10px #555; */
 }
 
-#irc input[name=channel] {
+#irc select[name=channel] {
     width: 50px;
 }
 

@@ -8,16 +8,18 @@ function scroll_to_bottom() {
     }, 300);
 }
 
-window.onorientationchange = function() {
-    if (window.orientation == 0 || window.orientation == 180) {
-        $("body").removeClass("landscape");
-    }
-    else {
-        $("body").addClass("landscape");
-    }
-    scroll_to_bottom();
-};
-window.onorientationchange();
+if (navigator.userAgent.indexOf("iPhone") != -1) {
+    window.onorientationchange = function() {
+        if (window.orientation == 0 || window.orientation == 180) {
+            $("body").removeClass("landscape");
+        }
+        else {
+            $("body").addClass("landscape");
+        }
+        scroll_to_bottom();
+    };
+    window.onorientationchange();
+}
 
 function padzero(x) {
     if (x < 10) return "0" + x;
@@ -97,11 +99,9 @@ $(function() {
     $("#text").focus();
 
     $("form#irc").bind("submit", function() {
-        var ident = $("#ident").val();
         var text = $("#text").val();
-        var channel = $("#channel").val();
 
-        if (!text || !ident || !channel) return false;
+        if (!text) return false;
 
         $.ajax({
             url: "/irc",
@@ -116,24 +116,14 @@ $(function() {
         return false;
     });
 
-    $("#channels a").bind("click", function() {
-        $("#channels").hide();
-        $("#channel").val( $(this).text() );
-
-        var channel_el_id = this.href.replace(/^.+#/, "");
-
+    $("select[name=channel]").bind("change", function() {
         $("#channels-wrapper .channel").hide();
-        $("#" + channel_el_id).show().scrollTop(0);
-
+        $channel_div_for( $(this).val() ).show();
+        scroll_to_bottom();
         return false;
     });
-
-    $("#channel").bind("click", function() {
-        $("#channels").show();
-        return false;
-    });
-
-    $("#channels a:first").trigger("click");
+    $("select[name=channel]").val( $("select[name=channels] option:first").val() );
+    $("select[name=channel]").trigger("change");
 
     var onNewEvent = function(e) {
         try {
@@ -171,7 +161,7 @@ $(function() {
     }
 
     setTimeout(function() {
-        if (typeof DUI != 'undefined') {
+        if (typeof DUI != 'undefined' && navigator.userAgent.indexOf("iPhone") == -1) {
             var s = new DUI.Stream();
             s.listen('application/json', function(payload) {
                 onNewEvent(eval('(' + payload + ')'));
