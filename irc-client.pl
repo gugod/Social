@@ -62,7 +62,7 @@ sub post {
     my $channel = $v->{channel};
     my $text = Encode::decode_utf8($v->{text});
 
-    $IRC_CLIENT->send_srv('PRIVMSG', $channel, $v->{text});
+    $IRC_CLIENT->send_srv('PRIVMSG', $channel, Encode::encode_utf8($text));
 
     my $html = Social::Helpers->format_message($text);
     my $mq = Tatsumaki::MessageQueue->instance("irc");
