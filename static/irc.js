@@ -71,16 +71,17 @@ $(function() {
     }
 
     setTimeout(function() {
+        $('.messages', self.el).html("");
+
         if (typeof DUI != 'undefined') {
             var s = new DUI.Stream();
             s.listen('application/json', function(payload) {
-                var event = eval('(' + payload + ')');
-                onNewEvent(event);
+                onNewEvent(eval('(' + payload + ')'));
             });
-            s.load('/irc/mpoll?session=' + Date.now() + Math.random());
+            s.load('/irc/mpoll?session=' + Date.now());
         } else {
             $.ev.handlers.message = onNewEvent;
-            $.ev.loop('/irc/poll?session=' + Date.now() + Math.random());
+            $.ev.loop('/irc/poll?session=' + Date.now());
         }
     }, 500);
 });
