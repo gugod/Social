@@ -5,6 +5,15 @@ use base 'AnyEvent::IRC::Client';
 use Tatsumaki::MessageQueue;
 use Social::Helpers;
 
+sub mq_publish {
+    my ($self, $e) = @_;
+    my $mq = Tatsumaki::MessageQueue->instance("irc");
+    $mq->publish({
+        time => scalar localtime,
+        %$e
+    });
+}
+
 sub new {
     my ($class) = @_;
     my $self = AnyEvent::IRC::Client->new;
@@ -18,11 +27,10 @@ sub new {
                 # NOTICE for bouncer backlog
                 my $msg = $packet->{params}[1];
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
-                my $mq = Tatsumaki::MessageQueue->instance("irc");
-                $mq->publish({
+
+                $self->mq_publish({
                     type => "privmsg",
                     address => "",
-                    time => scalar localtime,
                     channel => $channel,
                     name => $who,
                     html => Social::Helpers->format_message( Encode::decode_utf8($msg) )
@@ -47,17 +55,31 @@ sub new {
         },
 
         join => sub {
-            my ($con, $nick, $channel) = @_;
-            print "$nick joined $channel\n";
-
-            my $mq = Tatsumaki::MessageQueue->instance("irc");
-            $mq->publish({
-                type    => "join",
+            my ($con, $nick, $channel, $is_myself) = @_;
+            $self->mq_publish({
+                type    => 'join',
                 channel => $channel,
                 name    => $nick,
-                time    => scalar localtime
+                is_myself => $is_myself
             });
-        }
+        },
+
+        part => sub {
+            my ($con, $nick, $channel, $is_myself) = @_;
+            $self->mq_publish({
+                type    => 'part',
+                channel => $channel,
+                name    => $nick,
+                is_myself => $is_myself
+            });
+        },
+
+        ## A verf generic handler
+        # read => sub {
+        #     my ($con, $msg) = @_;
+        #     my $cmd = lc($msg->{command});
+        #     print Dump($msg);
+        # }
     );
 
     return $self;

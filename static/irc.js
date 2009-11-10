@@ -12,6 +12,13 @@ function scroll_to_bottom() {
     }, 300);
 }
 
+function time_text(x) {
+    var t = new Date( Date.parse(x) );
+    var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
+    return time_text;
+}
+
+
 var $channel_div_for = function(channel) {
     var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
 
@@ -22,36 +29,37 @@ var $channel_div_for = function(channel) {
     return $("#" + channel_el_id);
 }
 
+Social.Irc.append_event_line = function(e, message_body) {
+    var name   = e.name || e.ident || 'Anonymous';
+
+    var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type});
+
+    var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(message_body);
+
+    $line
+        .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
+        .append($message);
+
+    $channel_div_for(e.channel).append( $line );
+    scroll_to_bottom();
+
+    return $line;
+};
 
 Social.Irc.Handlers = {
     "join": function(e) {
-        var type   = "event";
         var name   = e.name || e.ident || 'Anonymous';
+        Social.Irc.append_event_line(e, name + " has joined " + e.channel);
+    },
 
-        var t = new Date( Date.parse(e.time) );
-        var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
-
-        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
-
-        var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(
-            name + " has joined " + e.channel
-        );
-
-        $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text) )
-            .append($message);
-
-        $channel_div_for(e.channel).append( $line );
-
-        scroll_to_bottom();
+    "part": function(e) {
+        var name   = e.name || e.ident || 'Anonymous';
+        Social.Irc.append_event_line(e, name + " has parted " + e.channel);
     },
 
     "privmsg": function(e) {
         var type   = "text";
         var name   = e.name   || e.ident || 'Anonymous';
-
-        var t = new Date( Date.parse(e.time) );
-        var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
 
         var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
 
@@ -61,7 +69,7 @@ Social.Irc.Handlers = {
         $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
 
         $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text) )
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
             .append( $('<span/>').addClass('sender').text(name + ": ") )
             .append($message);
 
