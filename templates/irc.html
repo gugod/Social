@@ -6,45 +6,48 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" />
         <meta name="apple-mobile-web-app-capable" content="yes">
-
         <title>IRC</title>
-        <link rel="stylesheet" href="/static/screen.css" />
-        <link rel="stylesheet" href="/static/irc.css" />
+        <style type="text/css" media="screen">
+          @import url(/static/irc.css);
+          @import url(/static/themes/vicutake/vicutake.css);
+        </style>
     </head>
     <body>
-        <form id="irc">
-            <div>
-                <input id="ident" type="hidden" name="ident" value="<%= $nick %>" />
-                <input id="channel" type="text" name="channel" readonly="readonly" />
-                <input id="text" name="text" type="text"/>
-                <input type="submit" value="Send" />
-                <a href="javascript:location.reload();"><img src="/static/reload.png" alt="Reload" /></a>
+        <div id="doc">
+            <form id="irc">
+                <div>
+                    <a href="javascript:location.reload();"><img src="/static/reload.png" alt="Reload" /></a>
+                    <input id="ident" type="hidden" name="ident" value="<%= $nick %>" />
+                    <input id="channel" type="text" name="channel" readonly="readonly" />
+                    <input id="text" name="text" type="text"/>
+                    <input type="submit" value="Send" />
+                </div>
+            </form>
+
+            <ul id="channels">
+                <% foreach my $name (map { my $o = $_; $_ = lc($_); s/([^0-9a-z])/ord($1)/eg; [$_, $o]; } @$channels) { %>
+                <li><a href="/irc#channel-<%= $name->[0] %>"><%= $name->[1] %></a></li>
+                <% } %>
+            </ul>
+
+            <div id="channels-wrapper">
+                <% foreach my $name (map { my $o = $_; $_ = lc($_); s/([^0-9a-z])/ord($1)/eg; [$_, $o]; } @$channels) { %>
+                <div class="channel" id="channel-<%= $name->[0] %>"></div>
+                <% } %>
             </div>
-        </form>
 
-        <ul id="channels">
-            <% foreach my $name (map { my $o = $_; $_ = lc($_); s/([^0-9a-z])/ord($1)/eg; [$_, $o]; } @$channels) { %>
-            <li><a href="/irc#channel-<%= $name->[0] %>"><%= $name->[1] %></a></li>
-            <% } %>
-        </ul>
-
-        <div id="channels-wrapper">
-            <% foreach my $name (map { my $o = $_; $_ = lc($_); s/([^0-9a-z])/ord($1)/eg; [$_, $o]; } @$channels) { %>
-            <div class="channel" id="channel-<%= $name->[0] %>"><ul class="messages"></ul></div>
-            <% } %>
         </div>
 
-        <div style="height:600px">&nbsp</div>
-
         <script src="/static/jquery-1.3.2.min.js"></script>
-% if ($_[0]->{handler}->request->param('mxhr')) {
-        <script src="/static/DUI.js"></script>
-        <script src="/static/Stream.js"></script>
-% } else {
-        <script src="/static/jquery.ev.js"></script>
-% }
         <script src="/static/jquery.md5.js"></script>
         <script src="/static/jquery.oembed.js"></script>
-        <script type="text/javascript" src="/static/irc.js"></script>
+
+% if ($_[0]->{handler}->request->param('mxhr')) {
+       <script src="/static/DUI.js"></script>
+       <script src="/static/Stream.js"></script>
+% } else {
+       <script src="/static/jquery.ev.js"></script>
+% }
+       <script type="text/javascript" src="/static/irc.js"></script>
     </body>
 </html>

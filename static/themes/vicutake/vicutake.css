@@ -1,0 +1,711 @@
+@charset "UTF-8";
+
+/*
+limechat.Vicuna
+ver.0.8
+*/
+
+html {
+	margin: 0;
+	padding-bottom: 0;
+	color: #000;
+}
+
+body {
+	margin: 0 3px;
+	font-family: 'Lucida Grande';
+	font-size: 9pt;
+	background-image: url(vicutake/images/bg.png);
+}
+
+div,
+span {
+	-webkit-box-sizing: border-box;
+}
+
+/*---------------------------------
+
+	Line
+
+----------------------------------*/
+
+.line {
+	border: 1px solid #eee;
+	position: relative;
+	background-color: #fff;
+	-webkit-border-top-right-radius: 7px;
+	-webkit-border-bottom-left-radius:7px;
+}
+
+/*--------------------
+	通常行
+---------------------*/
+
+.line.text {
+	margin-top: 1px;
+	margin-bottom: 1px;
+	padding: 5px 6px;
+}
+
+/*時間*/
+
+.line.text .time {
+	padding: 1px 2px;
+	color: #666;
+	font-size: 7pt;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+/*--------------------
+	偶数・奇数行
+---------------------*/
+
+.line[alternate=even] {
+	background-color: #f5f5f5;
+}
+
+.line[alternate=odd] {
+	
+}
+
+/*--------------------
+	エンター押した時のアニメ
+	(いらない場合は消して)
+---------------------*/
+
+.line:last-child {
+	-webkit-animation-name: pop;
+    -webkit-animation-duration: 0.3s;
+}
+
+/* Anim */
+
+@-webkit-keyframes pop {
+	0% {
+			-webkit-transform: translateY(50%);
+	}
+	100% {
+			-webkit-transform: translateY(0);
+			opacity: 1;
+	}
+}
+
+/*---------------------------------
+
+	Sender (名前)
+
+----------------------------------*/
+
+.sender {
+	font-size: 11px;
+	font-weight: bold;
+}
+
+/*--------------------
+	自分の発言
+---------------------*/
+
+.sender[type=myself] {
+	color: #C90064;
+}
+
+/*--------------------
+	他人の発言
+---------------------*/
+
+.sender[type=normal] {
+	color: #0F87CB;
+	height: 20px;
+}
+
+/*--------------------
+	発言順
+---------------------*/
+
+.sender[first=true] {
+
+}
+
+.sender[first=true] {
+	
+}
+
+.sender[first=false] {
+	
+}
+
+/*---------------------------------
+
+	Message
+
+----------------------------------*/
+
+.message {
+
+}
+
+/*--------------------
+	Class
+---------------------*/
+
+.url {
+	display: inline-block;
+	color: #669900;
+	word-break: break-all;
+}
+
+.url:hover {
+	color: #CC3300;
+}
+
+.url:before {
+	display: inline-block;
+	vertical-align: top;
+	margin-right: 5px;
+	content: url(vicutake/famfamfam/world_add.png);
+	height: 10px;
+}
+
+.url[href$='.gif']:after,
+.url[href$='.jpg']:after,
+.url[href$='.png']:after,
+.url[href$='.bmp']:after {
+ margin-left: 3px;
+ content: url(vicutake/famfamfam/picture.png);
+}
+
+/*nannde kikanai*/
+
+.url[href$='.txt']:after,
+.url[href$='.css']:after,
+.url[href$='.js']:after,
+.url[href$='.xml']:after {
+ margin-left: 3px;
+ content: url(vicutake/famfamfam/page_green.png);
+}
+
+.place {
+	color: #808080;
+}
+
+/*---------------------------------
+
+	Events
+
+----------------------------------*/
+
+.event[type] {
+	padding: 5px 40px 7px 33px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: rgba(255,255,255,0.4) rgba(0,0,0,0.3) rgba(0,0,0,0.3) rgba(255,255,255,0.3);
+	background-color: #7c8a91;
+	background-image: url(vicutake/images/or_light1.png);
+	background-repeat: repeat-x;	
+	font-weight: bold;
+	font-size: 11px;
+	text-shadow: -1px -1px 0 rgba(0,0,0,0.4);
+	-webkit-border-radius: 4px;
+	-webkit-box-shadow: 1px 2px 2px rgba(50,50,50,0.2);
+	min-height: 25px;
+
+}
+
+.event .message {
+	color: #fff;
+}
+
+.event:before {
+	padding: 5px 4px 2px;
+	content: url(vicutake/famfamfam/cog.png);
+	position: absolute;
+	top: -1px;
+	left: 0;
+	height: 100%;
+	border-right: 1px solid rgba(255,255,255,0.4);
+	background-color: rgba(255,255,255,0.1);
+	background-image: url(vicutake/images/or_aqua1.png);
+	background-repeat: repeat-x;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+}
+
+.event + .text {
+	margin-top: 4px;
+}
+
+.text + .event {
+	margin-top: 4px;
+}
+
+/* 時間 */
+
+.line.event .time {
+	display: inline-block;
+	padding: 1px 3px 1px 5px;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	color: #fff;
+	font-size: 8pt;
+	background: rgba(50,50,50,0.1);
+	-webkit-border-top-left-radius: 4px;
+	border-top: 1px solid rgba(50,50,50,0.2);
+	border-left: 1px solid rgba(50,50,50,0.2);
+}
+
+/* URL */
+
+.event .url {
+	color: rgba(255,255,255, 0.8);
+}
+
+.event .url:hover {
+	color: rgba(255,255,255, 1);
+}
+
+/*---------------------------------
+
+	Event Icon
+
+----------------------------------*/
+
+.event[type=system]:before {
+	content: url(vicutake/famfamfam/rainbow.png);
+}
+
+.event[type=join]:before {
+	content: url(vicutake/famfamfam/lightbulb.png);
+}
+
+.event[type=part]:before,
+.event[type=quit]:before{
+	content: url(vicutake/famfamfam/lightbulb_off.png);
+}
+
+.event[type=reply]:before {
+	
+}
+	
+.event[type=nick]:before {
+	content: url(vicutake/famfamfam/pencil2.png);
+}
+
+.event[type=mode]:before {
+	content: url(vicutake/famfamfam/cup.png);
+}
+
+.event[type=topic]:before {
+	content: url(vicutake/famfamfam/bell.png);
+}
+
+/*---------------------------------
+
+	Event Level 2
+
+----------------------------------*/
+
+.event[type=join],
+.event[type=part],
+.event[type=quite] {
+	
+}
+
+.event[type=join] .message,
+.event[type=part] .message
+.event[type=quite] .message {
+	font-size: 9pt;
+}
+
+/*-------------------- 
+	Join
+---------------------*/
+
+.event[type=join] {
+	padding-bottom: 20px;
+	background-color: #0092c3;
+	-webkit-animation-name: join;
+	-webkit-animation-duration: 0.5s;
+	-webkit-animation-timing-function: cubic-bezier(0.5,0,0.5,1);
+	-webkit-animation-iteration-count: 1;
+	-webkit-animation-delay: 0;
+}
+
+/* Anim */
+
+@-webkit-keyframes join {
+	0% {
+		background-color: #006f95;
+		-webkit-transform: perspective(800) scale(0.9) rotateY(90deg);	
+	}
+	50% {
+		background-color: #3fc9ff;
+		-webkit-transform: perspective(800) scale(0.9) rotateY(0deg);
+	}
+	100% {
+		background-color: #0092c3;
+		-webkit-transform: scale(1.0);
+	}
+}
+
+.event[type=join] .address {
+	padding: 3px 3px;
+	position: absolute;
+	left: 30px;
+	bottom: 0;
+	text-decoration: none;
+	color: rgba(255,255,255,0.7);
+	font-size: 7pt;
+}
+
+/*--------------------
+	Quite and Part
+---------------------*/
+
+.event[type=part],
+.event[type=quit] {
+	background-color: #a16860;
+	-webkit-animation-name: quite;
+	-webkit-animation-duration: 2s;
+	-webkit-animation-timing-function: ease-out;
+	-webkit-transform: scale(1);
+}
+
+/* Anim */
+
+@-webkit-keyframes quite {
+	0% {
+		background-color: #ba1f67;
+	}
+	100% {
+		background-color: #a16860;
+	}
+}
+
+/*--------------------
+	Nick
+---------------------*/
+
+.event[type=nick] {
+	background-color: #7A75A7;
+	-webkit-animation-name: rotate;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-timing-function: ease-out;
+}
+
+/* Anim */
+
+@-webkit-keyframes rotate {
+	0% {
+		-webkit-transform: scale(0.9);
+	}
+	33% {
+			-webkit-transform: rotate(5deg);
+			background-color: #A276ED;
+	}
+	66% {
+		-webkit-transform: rotate(-5deg);
+		background-color: #A276ED;
+	}
+	100% {
+		background-color: #7A75A7;
+	}
+}
+
+/*---------------------------------
+
+	Event Level 1
+
+----------------------------------*/
+
+/*-------------------- 
+	System
+---------------------*/
+
+.event[type=system] {
+	background-color: #333;
+	background-image: url(vicutake/images/or_light2_check1.png)
+}
+
+/* Topic change */
+
+.event[type=topic] {
+	background-color: #67B017;
+}
+
+.event[type=topic]:nth-last-of-type(1) {
+	
+}
+
+/* reply */
+
+.event[type=reply] {
+	background-color: #5B6D88;
+}
+
+/* System */
+
+.event[type=system] {
+	
+}
+
+/* Error */
+
+.event[type=error] {
+
+}
+
+/* Reply */
+
+.event[type=reply] {
+	
+}
+
+
+.event[type=error_reply] {
+	
+}
+
+/* Send */
+
+.event[type=dcc_send_send] {
+	
+}
+
+.event[type=dcc_send_receive] {
+	
+}
+
+/* Notice Quite */
+
+.event[type=notice] {
+	
+}
+
+.line[type=notice] {
+	border-color: #c1e9ff;
+	border-bottom-style: dotted;
+	background-color: #f0f7f8;
+	font-family: "Osaka－等幅", Osaka-mono, monospace;
+	-webkit-border-top-left-radius: 7px;
+	-webkit-border-bottom-left-radius: 0;
+	line-height: 1.2;
+}
+
+.line[type=notice] + .line[type=notice] {
+	margin-top: -1px;
+	padding-top: 2px;
+	border-top: none;
+	position: relative;
+	-webkit-border-top-left-radius: 0;
+	-webkit-border-top-right-radius: 0;
+}
+
+.line[type=notice] .message {
+	display: block;
+	margin: 3px 0 0;
+	color: #227e90;
+}
+
+/*
+.line[type=notice] .message:before {
+	content: "‘";
+	color: #09F;
+}
+
+.line[type=notice] .message:after {
+	content: "’";
+	color: #09F;
+}
+*/
+
+.line[type=notice] .sender[first=false] {
+	display: none;
+}
+
+/* Action */
+
+.event[type=action] {
+	
+}
+
+/* Kick Kill */
+
+.event[type=kick] {
+	
+}
+
+.event[type=kill] {
+	
+}
+
+/* Nick */
+
+.event[type=nick] {
+
+}
+
+/* Mode */
+
+.event[type=mode] {
+
+}
+
+/* Send */
+
+.event[type=invite] {
+	
+}
+
+.event[type=wallops] {
+	
+}
+
+.event[type=debug_send] {
+	
+}
+
+.event[type=debug_receive] {
+	
+}
+
+/*---------------------------------
+
+	Heighlight
+
+----------------------------------*/
+
+.highlight {
+	color: #C90064;
+	font-weight: normal;
+}
+
+.line[highlight=true] {
+	background-color: #FFFFF4;
+	border-color: #FFF5CF;
+}
+
+.line[highlight=true] .sender {
+	display: inline-block;
+	margin-right: 8px;
+	padding: 4px 8px;
+	background-color: #C90064;
+	font-weight: bold;
+
+	-webkit-box-shadow: 1px 1px 1px #ccc;
+	-webkit-border-radius: 3px;
+	-webkit-animation-name: call;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count: 3;
+	-webkit-animation-timing-function: cubic-bezier(0.5,0,0.5,1);
+
+	background-image: url(vicutake/images/or_ligh.png);
+	background-repeat: repeat-x;
+}
+
+/* Anim */
+
+@-webkit-keyframes call {
+	0% {
+		-webkit-transform: scale(0.900);
+	}
+	10% {
+		-webkit-transform: scale(1.100);
+	}
+	20% {
+		-webkit-transform: scale(0.927);
+	}
+	30% {
+		-webkit-transform: scale(1.051);
+	}
+	40% {
+		-webkit-transform: scale(0.965);
+	}
+	50% {
+		-webkit-transform: scale(1.021);
+	}
+	60% {
+		-webkit-transform: scale(0.987);
+	}
+	70% {
+		-webkit-transform: scale(1.0027);
+	}
+	80% {
+		-webkit-transform: scale(0.9992);
+	}
+	90% {
+		-webkit-transform: scale(1.0006);
+	}
+	100% {
+		-webkit-transform: scale(1);
+	}
+}
+
+.line[highlight=true] .sender {
+	color: #fff!important;
+}
+
+.line[highlight=true] .message{
+	
+}
+
+/*---------------------------------
+
+	Console
+
+----------------------------------*/
+
+body[type=console] .event[type],
+body[type=server] .event[type] {
+	background-image: none;
+	-webkit-border-radius: 0px;
+	-webkit-animation-name: none;
+	border-top-color: rgba(255,255,255,0.2);
+	border-bottom-color: rgba(50,50,50,0.2);
+	text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+}
+
+body[type=console] .event[type]:before,
+body[type=server] .event[type]:before {
+    background-image: url(vicutake/images/or_shadow1.png);
+    border-color: rgba(0,0,0,0.2);
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    height: auto;
+	-webkit-border-radius: 0px;
+}
+
+.console .line[highlight=true] {
+	-webkit-animation-name: none;
+}
+
+.console .line[highlight=true] {
+	
+}
+
+.console .line[alternate=odd]{
+	
+}
+
+.console .line[alternate=even] {
+	
+}
+
+.event .place {
+	margin-right: 5px;
+	color: #fff;
+	padding: 1px;
+	background-color: rgba(50,50,50,0.2);
+}
+
+.place {
+	color: #C90064;
+	font-size: 8pt;
+}
+
+/*---------------------------------
+
+	?
+
+----------------------------------*/

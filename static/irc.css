@@ -1,102 +1,101 @@
 body {
+    position: absolute;
+    top: 0;
+    left: 0;
+
     margin: 0;
     padding: 0;
+
+    width: 320px;
+    height: 356px;
+    overflow: hidden;
 }
+
 h1 {
     font-size: 1.5em;
 }
 #messages {
     margin: 1em 0;
 }
-.avatar {
-    width: 25px;
-    vertical-align: top;
-}
-.avatar img {
-    width: 25px;
-    height: 25px;
-    vertical-align: top;
-    margin-right: 0.5em;
-}
+
 .chat-message {
     vertical-align: middle;
+    min-height: 30px;
+    margin: 0 5px 5px 0;
+    padding: 0 0 0 30px;
 }
+
 .chat-message .name {
     font-weight: bold;
 }
-.meta {
-    vertical-align: top;
-    color: #888;
-    font-size: 0.8em;
-}
-.message .avatar {
-    float: left;
-    margin: 0 5px 5px 0;
-    padding: 0;
-}
-.message .chat-message {
-    line-height: 15px;
-    min-height: 30px;
-    margin: 0 5px 5px 0;
-    padding: 0;
-}
-.message .meta {
-    display: none;
-    height: 25px;
-    margin: 0 5px 5px 30px;
-    padding: 0;
-}
+
 #channels {
     display: none;
     margin: 0;
     padding: 5px;
     z-index: 100;
     position: absolute;
-    top: 5px;
+    bottom: 5px;
     left: 5px;
     width: 50px;
     background: #fff;
-    width: 250px;
+    width: 290px;
     border: 1px solid #999;
 
     -webkit-box-shadow: 5px 5px 5px #aaa;
 }
 #channels a {
     display: block;
-    font-size: 1.5em;
+    font-size: 1.414em;
     padding: 0.25em;
-    line-height: 2em;
 }
 #channels a:hover {
     background: #aaa;
 }
-form#irc {
+
+#irc {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 310px;
+    z-index: 10;
+    bottom: 0;
     height: 40px;
     line-height: 40px;
-    background: #eee;
+
+    background: #ccc;
+
     padding: 0 0 0 10px;
-    -webkit-box-shadow: -5px 5px 5px #aaa;
+    margin: 0;
+    width: 98%;
+
+    /* -webkit-box-shadow: 0px -5px 10px #555; */
 }
-#channel {
-    width: 6em;
+
+#irc input[name=channel] {
+    width: 50px;
 }
+
+#irc input[name=text] {
+    width: 150px;
+}
+
+#irc input[type=submit] {
+    width: 50px;
+}
+
 .channel {
-    display: none;v
+    display: none;
     padding: 0;
     margin: 0;
 }
+
 #channels-wrapper {
+    position: absolute;
+    z-index: 5;
     margin: 0;
     padding: 0;
-    position: absolute;
-    top: 50px;
+    bottom: 50px;
     left: 0;
+    height: 300px;
     width: 100%;
-    min-height: 366px;
     overflow-y: auto;
     overflow-x: hidden;
 }

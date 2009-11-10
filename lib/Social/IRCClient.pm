@@ -12,19 +12,19 @@ sub new {
 
     $self->reg_cb(
         publicmsg  => sub {
-            my($con, $channel, $packet) = @_;
+            my ($con, $channel, $packet) = @_;
+
             if ($packet->{command} eq 'NOTICE' || $packet->{command} eq 'PRIVMSG') {
                 # NOTICE for bouncer backlog
                 my $msg = $packet->{params}[1];
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
                 my $mq = Tatsumaki::MessageQueue->instance("irc");
                 $mq->publish({
-                    type => "message",
-                    address => "chat.freenode.net",
+                    type => "privmsg",
+                    address => "",
                     time => scalar localtime,
                     channel => $channel,
                     name => $who,
-                    ident => "$who\@gmail.com", # let's just assume everyone's gmail :)
                     html => Social::Helpers->format_message( Encode::decode_utf8($msg) )
                 });
             }
@@ -49,6 +49,14 @@ sub new {
         join => sub {
             my ($con, $nick, $channel) = @_;
             print "$nick joined $channel\n";
+
+            my $mq = Tatsumaki::MessageQueue->instance("irc");
+            $mq->publish({
+                type    => "join",
+                channel => $channel,
+                name    => $nick,
+                time    => scalar localtime
+            });
         }
     );
 

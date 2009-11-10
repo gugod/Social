@@ -1,3 +1,76 @@
+function padzero(x) {
+    if (x < 10) return "0" + x;
+    return x;
+};
+
+var Social = {};
+Social.Irc = {};
+
+function scroll_to_bottom() {
+    setTimeout(function() {
+        $("#channels-wrapper").scrollTop( $("#channels-wrapper").get(0).scrollHeight );
+    }, 300);
+}
+
+var $channel_div_for = function(channel) {
+    var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
+
+    if ($("#" + channel_el_id).size() == 0) {
+        $("<div/>").appendTo("#channels-wrapper").attr({ "id": channel_el_id, "class": "channel" }).html("");
+    }
+
+    return $("#" + channel_el_id);
+}
+
+
+Social.Irc.Handlers = {
+    "join": function(e) {
+        var type   = "event";
+        var name   = e.name || e.ident || 'Anonymous';
+
+        var t = new Date( Date.parse(e.time) );
+        var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
+
+        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
+
+        var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(
+            name + " has joined " + e.channel
+        );
+
+        $line
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text) )
+            .append($message);
+
+        $channel_div_for(e.channel).append( $line );
+
+        scroll_to_bottom();
+    },
+
+    "privmsg": function(e) {
+        var type   = "text";
+        var name   = e.name   || e.ident || 'Anonymous';
+
+        var t = new Date( Date.parse(e.time) );
+        var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
+
+        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
+
+        var $message = $('<span/>').attr({"class": "message", "type": e.type });
+        if (e.text) $message.text(e.text);
+        if (e.html) $message.html(e.html);
+        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
+
+        $line
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text) )
+            .append( $('<span/>').addClass('sender').text(name + ": ") )
+            .append($message);
+
+        $channel_div_for(e.channel).append( $line );
+
+        scroll_to_bottom();
+    }
+};
+
 $(function() {
     $("#text").focus();
 
@@ -13,7 +86,10 @@ $(function() {
             data: $(this).serialize(),
             type: 'post',
             dataType: 'json',
-            success: function(r) { $("#text").val("").focus(); }
+            success: function(r) {
+                $("#text").val("").focus();
+                $("#channels-wrapper").scrollTop(599999);
+            }
         });
         return false;
     });
@@ -23,9 +99,6 @@ $(function() {
         $("#channel").val( $(this).text() );
 
         var channel_el_id = this.href.replace(/^.+#/, "");
-
-        $("#channels-wrapper").scrollTop( $("#" + channel_el_id).position().top );
-        $("#" + channel_el_id).scrollTop(0);
 
         $("#channels-wrapper .channel").hide();
         $("#" + channel_el_id).show().scrollTop(0);
@@ -38,41 +111,44 @@ $(function() {
         return false;
     });
 
-    setTimeout(function() {
-        $("#channels a:first").trigger("click");
-    }, 1000);
+    $("#channels a:first").trigger("click");
 
     var onNewEvent = function(e) {
         try {
-            var src    = e.avatar || ("http://www.gravatar.com/avatar/" + $.md5(e.ident || 'foo'));
+            var type   = e.type == "privmsg" ? "text" : "event";
             var name   = e.name   || e.ident || 'Anonymous';
-            var avatar = $('<img/>').attr('src', src).attr('alt', name);
 
-            avatar = $('<div/>').addClass('avatar').append(avatar);
+            var $line = $('<div/>').attr({
+                'class': 'line ' + type,
+                'nick': name,
+                'type': type
+            });
 
-            var message = $('<div/>').addClass('chat-message');
-            if (e.text) message.text(e.text);
-            if (e.html) message.html(e.html);
-            message.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
-            var name = e.name || (e.ident ? e.ident.split('@')[0] : null);
-            if (name)
-                message.prepend($('<span/>').addClass('name').text(name+ ': '));
+            $line.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
 
-            var meta = $('<span/>').addClass('meta').text(' (' + e.time + ' from ' + e.address + ')');
+            var t = new Date( Date.parse(e.time) );
+            var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
 
-            var channel_el_id = "channel-" + e.channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
+            $line.append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text) );
+            $line.append( $('<span/>').addClass('sender').text(name + ": ") );
 
-            if ($("#" + channel_el_id).size() == 0) {
-                $("<div/>").appendTo("#channels-wrapper").attr({ "id": channel_el_id, "class": "channel" }).html("<ul class='messages'></ul>");
-            }
+            var $message = $('<span/>').attr({"class": "message", "type": type });
+            if (e.text) $message.text(e.text);
+            if (e.html) $message.html(e.html);
 
-            $('.messages', "#" + channel_el_id).prepend($('<li/>').addClass('message').addClass("clearfix").append(avatar).append(message).append(meta));
+            $line.append($message);
+
+            $channel_div_for(e.channel).append( $line );
+
+            setTimeout(function() {
+                $("#channels-wrapper").scrollTop( $("#channels-wrapper").get(0).scrollHeight );
+                // $("#channels-wrapper").stop();
+                // $("#channels-wrapper").animate({ "scrollTop": $("#channels-wrapper").get(0).scrollHeight });
+            }, 300);
         } catch(e) { if (console) console.log(e) };
     }
 
     setTimeout(function() {
-        $('.messages', self.el).html("");
-
         if (typeof DUI != 'undefined') {
             var s = new DUI.Stream();
             s.listen('application/json', function(payload) {
@@ -80,8 +156,7 @@ $(function() {
             });
             s.load('/irc/mpoll?session=' + Date.now());
         } else {
-            $.ev.handlers.message = onNewEvent;
-            $.ev.loop('/irc/poll?session=' + Date.now());
+            $.ev.loop('/irc/poll?session=' + Date.now(), Social.Irc.Handlers);
         }
     }, 500);
 });

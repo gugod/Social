@@ -6,7 +6,7 @@ networks:
     channels:
       # Channel names does not need to have "#" prefix
       - jabbot
-      - test
+      # - test
 
       # If they do, they are read as-is, and then you need to quote it
       # - "#ubunto"

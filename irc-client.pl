@@ -67,7 +67,7 @@ sub post {
     my $html = Social::Helpers->format_message($text);
     my $mq = Tatsumaki::MessageQueue->instance("irc");
     $mq->publish({
-        type => "message",
+        type => "privmsg",
         html => $html,
         ident => $v->{ident},
         channel => $channel,
