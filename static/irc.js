@@ -1,3 +1,8 @@
+if (navigator.standalone) {
+    $("body").addClass("full-screen");
+}
+
+
 function padzero(x) {
     if (x < 10) return "0" + x;
     return x;

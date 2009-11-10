@@ -99,3 +99,10 @@ h1 {
     overflow-y: auto;
     overflow-x: hidden;
 }
+
+body.full-screen {
+    height: 460px;
+}
+body.full-screen #channels-wrapper {
+    height: 404px;
+}
