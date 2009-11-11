@@ -8,15 +8,14 @@ Social is implemented with Perl, you do not need to install itself to
 get it working, but it requires following CPAN modules to be
 installed:
 
+- Encode
 - YAML
 - AnyEvent::IRC
 - FindBin
 - HTML::Entities
 - Plack
 - Plack::Request
-
-Besides those, it also requires
-[Tatsumaki](http://github.com/miyagawa/Tatsumaki) on github.
+- Tatsumaki
 
 Running IRC Client
 ------------------
