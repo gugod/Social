@@ -28,19 +28,21 @@ h1 {
     background: #ccc;
     padding: 0;
     margin: 0;
-    width: 100%;
+}
+
+#irc a {
+    display: block;
+    float: left;
+    margin: 2px 0 0 7px;
 }
 
 #irc select[name=channel] {
     width: 80px;
+    margin-left: 6px;
 }
 
 #irc input[name=text] {
-    width: 140px;
-}
-
-#irc input[type=submit] {
-    width: 50px;
+    width: 160px;
 }
 
 .channel {

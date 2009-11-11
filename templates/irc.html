@@ -19,16 +19,15 @@
         <div id="doc">
             <form id="irc">
                 <div>
-                    <a href="javascript:location.reload();"><img src="/static/reload.png" alt="Reload" /></a>
+                    <a href="javascript:location.reload();"><img src="/static/01-refresh.png" alt="Reload" width="12" height="13" /></a>
                     <input id="ident" type="hidden" name="ident" value="<%= $nick %>" />
                     <select name="channel">
                         <% for my $name (@$channels) { %>
                         <option value="<%= $name %>"><%= $name %></option>
                         <% } %>
                     </select>
-
                     <input id="text" name="text" type="text"/>
-                    <input type="submit" value="Send" />
+                    <input type="image" src="/static/09-chat2.png" height="15" />
                 </div>
             </form>
 
