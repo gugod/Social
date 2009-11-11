@@ -142,15 +142,32 @@ $(function() {
         } catch(e) { if (console) console.log(e) };
     }
 
-    setTimeout(function() {
-        var s = new DUI.Stream();
-        s.listen('application/json', function(payload) {
-            var e = eval('(' + payload + ')');
-            var f = Social.Irc.Handlers[e.type];
-            if ($.isFunction(f)) {
-                f(e);
-            }
-        });
-        s.load('/irc/mpoll?session=' + Date.now());
-    }, 500);
+
+    $.ajaxSetup({ cache: true });
+    if (navigator.userAgent.indexOf("iPhone") != -1) {
+        $.getScript(
+            "/static/jquery.ev.js",
+            function() {
+                $.ev.loop('/irc/poll?session=' + Date.now(), Social.Irc.Handlers);
+            });
+    }
+    else {
+        $.getScript(
+            "/static/DUI.js",
+            function() {
+                $.getScript(
+                    "/static/Stream.js",
+                    function() {
+                        var s = new DUI.Stream();
+                        s.listen('application/json', function(payload) {
+                            var e = eval('(' + payload + ')');
+                            var f = Social.Irc.Handlers[e.type];
+                            if ($.isFunction(f)) f(e);
+                        });
+                        s.load('/irc/mpoll?session=' + Date.now());
+                    }
+                );
+            });
+    }
+    $.ajaxSetup({ cache: false });
 });
