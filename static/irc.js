@@ -1,26 +1,25 @@
-if (navigator.standalone) {
-    $("body").addClass("full-screen");
-}
-
-if (navigator.userAgent.indexOf("iPhone") != -1) {
-    window.onorientationchange = function() {
-        if (window.orientation == 0 || window.orientation == 180) {
-            $("body").removeClass("landscape");
-        }
-        else {
-            $("body").addClass("landscape");
-        }
-    };
-    window.onorientationchange();
-}
+var Social = {};
+Social.Irc = {};
 
 function padzero(x) {
     if (x < 10) return "0" + x;
     return x;
 };
 
-var Social = {};
-Social.Irc = {};
+Social.launch_polling = function() {
+    if ($.ev) {
+        $.ev.loop('/irc/poll?session=' + Date.now(), Social.Irc.Handlers);
+    }
+    else {
+        var s = new DUI.Stream();
+        s.listen('application/json', function(payload) {
+            var e = eval('(' + payload + ')');
+            var f = Social.Irc.Handlers[e.type];
+            if ($.isFunction(f)) f(e);
+        });
+        s.load('/irc/mpoll?session=' + Date.now());
+    }
+}
 
 function time_text(x) {
     var t = new Date( Date.parse(x) );
@@ -74,7 +73,8 @@ Social.Irc.Handlers = {
         var $message = $('<span/>').attr({"class": "message", "type": e.type });
         if (e.text) $message.text(e.text);
         if (e.html) $message.html(e.html);
-        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
+
+        $message.find('a').oembed(null, { embedMethod: "auto", maxWidth: 200 });
 
         $line
             .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
@@ -93,6 +93,8 @@ $(function() {
 
         if (!text) return false;
 
+        $(this).attr("disabled", "disabled");
+
         $.ajax({
             url: "/irc",
             data: $(this).serialize(),
@@ -100,6 +102,7 @@ $(function() {
             dataType: 'json',
             success: function(r) {
                 $("#text").val("").focus();
+                $(this).removeAttr("disabled");
             }
         });
         return false;
@@ -112,62 +115,27 @@ $(function() {
     });
     $("select[name=channel]").val( $("select[name=channels] option:first").val() );
     $("select[name=channel]").trigger("change");
-
-    var onNewEvent = function(e) {
-        try {
-            var type   = e.type == "privmsg" ? "text" : "event";
-            var name   = e.name   || e.ident || 'Anonymous';
-
-            var $line = $('<div/>').attr({
-                'class': 'line ' + type,
-                'nick': name,
-                'type': type
-            });
-
-            $line.find('a').oembed(null, { embedMethod: "append", maxWidth: 240 });
-
-            var t = new Date( Date.parse(e.time) );
-            var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
-
-            $line.append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text) );
-            $line.append( $('<span/>').addClass('sender').text(name + ": ") );
-
-            var $message = $('<span/>').attr({"class": "message", "type": type });
-            if (e.text) $message.text(e.text);
-            if (e.html) $message.html(e.html);
-
-            $line.append($message);
-
-            $channel_div_for(e.channel).prepend( $line );
-        } catch(e) { if (console) console.log(e) };
-    }
-
-
-    $.ajaxSetup({ cache: true });
-    if (navigator.userAgent.indexOf("iPhone") != -1) {
-        $.getScript(
-            "/static/jquery.ev.js",
-            function() {
-                $.ev.loop('/irc/poll?session=' + Date.now(), Social.Irc.Handlers);
-            });
-    }
-    else {
-        $.getScript(
-            "/static/DUI.js",
-            function() {
-                $.getScript(
-                    "/static/Stream.js",
-                    function() {
-                        var s = new DUI.Stream();
-                        s.listen('application/json', function(payload) {
-                            var e = eval('(' + payload + ')');
-                            var f = Social.Irc.Handlers[e.type];
-                            if ($.isFunction(f)) f(e);
-                        });
-                        s.load('/irc/mpoll?session=' + Date.now());
-                    }
-                );
-            });
-    }
-    $.ajaxSetup({ cache: false });
 });
+
+if (navigator.userAgent.indexOf("iPhone") != -1) {
+    if (navigator.standalone) {
+        $("body").addClass("full-screen");
+    }
+
+    window.onorientationchange = function() {
+        if (window.orientation == 0 || window.orientation == 180) {
+            $("body").removeClass("landscape");
+        }
+        else {
+            $("body").addClass("landscape");
+        }
+    };
+    window.onorientationchange();
+
+    $.getScript("/static/jquery.ev.js", Social.launch_polling);
+}
+else {
+    $.getScript("/static/DUI.js", function() {
+        $.getScript("/static/Stream.js", Social.launch_polling)
+    });
+}
