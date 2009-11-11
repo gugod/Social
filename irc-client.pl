@@ -152,7 +152,14 @@ while (my ($network, $config) = each %{$CONFIG->{networks}}) {
     my $x = Social::IRCClient->new;
     $x->heap->{config} = $config;
 
-    $x->connect( $config->{host}, $config->{port} || 6667, { nick => $CONFIG->{nick} });
+    $x->connect(
+        $config->{host},
+        $config->{port} || 6667,
+        {
+            nick     => $CONFIG->{nick},
+            password => $config->{password}
+        }
+    );
 
     $IRC_CLIENT{$network} = $x;
     $IRC_CLIENT = $x;
