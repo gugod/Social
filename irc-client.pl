@@ -24,11 +24,8 @@ use Tatsumaki::Application;
 use Tatsumaki::HTTPClient;
 use Tatsumaki::MessageQueue;
 use Tatsumaki::Server;
-use Tatsumaki::Middleware::BlockingFallback;
-use Plack::Middleware::Static;
+
 use Plack::Middleware::AccessLog;
-use Encode;
-use HTML::Entities;
 
 $Tatsumaki::MessageQueue::BacklogLength = $CONFIG->{MessageQueueBacklogLength} || 1000;
 
@@ -44,6 +41,7 @@ sub get {
 
 package IrcController;
 use base qw(Tatsumaki::Handler);
+use Encode;
 
 sub get {
     my ($self) = @_;
@@ -60,21 +58,21 @@ sub post {
     my $v = $self->request->params;
 
     my $channel = $v->{channel};
-    my $text = Encode::decode_utf8($v->{text});
 
-    $IRC_CLIENT->send_srv('PRIVMSG', $channel, Encode::encode_utf8($text));
+    $IRC_CLIENT->send_srv('PRIVMSG', $channel, Encode::encode_utf8($v->{text}));
 
-    my $html = Social::Helpers->format_message($text);
+    my $html = Social::Helpers->format_message($v->{text});
+
     my $mq = Tatsumaki::MessageQueue->instance("irc");
     $mq->publish({
-        type => "privmsg",
-        html => $html,
-        ident => $v->{ident},
+        type    => "privmsg",
+        html    => $html,
+        ident   => $v->{ident},
         channel => $channel,
-        avatar => $v->{avatar},
-        name => $v->{name},
+        avatar  => $v->{avatar},
+        name    => $v->{name},
         address => $self->request->address,
-        time => scalar localtime(time),
+        time    => scalar localtime(time),
     });
 
     $self->write({ success => 1 });
@@ -138,13 +136,7 @@ my $app = Tatsumaki::Application->new([
 ]);
 
 $app->template_path(dirname(__FILE__) . "/templates");
-$app->template->{tag_start}  = "<%";
-$app->template->{tag_end}    = "%>";
-$app->template->{line_start} = "%";
 
-$app = Plack::Middleware::Static->wrap($app, path => qr/^\/static/, root => dirname(__FILE__));
-
-$app = Tatsumaki::Middleware::BlockingFallback->wrap($app);
 $app = Plack::Middleware::AccessLog->wrap($app);
 
 my %IRC_CLIENT = ();
