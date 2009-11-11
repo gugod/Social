@@ -14,7 +14,7 @@ html {
 body {
 	margin: 0 3px;
 	font-family: 'Lucida Grande';
-	font-size: 9pt;
+	font-size: 100%;
 	background-image: url(vicutake/images/bg.png);
 }
 
@@ -52,7 +52,7 @@ span {
 .line.text .time {
 	padding: 1px 2px;
 	color: #666;
-	font-size: 7pt;
+	font-size: 60%;
 	position: absolute;
 	right: 0;
 	bottom: 0;
@@ -99,7 +99,7 @@ span {
 ----------------------------------*/
 
 .sender {
-	font-size: 11px;
+	font-size: 75%;
 	font-weight: bold;
 }
 
@@ -205,7 +205,7 @@ span {
 	background-image: url(vicutake/images/or_light1.png);
 	background-repeat: repeat-x;	
 	font-weight: bold;
-	font-size: 11px;
+	font-size: 75%;
 	text-shadow: -1px -1px 0 rgba(0,0,0,0.4);
 	-webkit-border-radius: 4px;
 	-webkit-box-shadow: 1px 2px 2px rgba(50,50,50,0.2);
@@ -249,7 +249,7 @@ span {
 	bottom: 0;
 	right: 0;
 	color: #fff;
-	font-size: 8pt;
+	font-size: 80%;
 	background: rgba(50,50,50,0.1);
 	-webkit-border-top-left-radius: 4px;
 	border-top: 1px solid rgba(50,50,50,0.2);
@@ -316,7 +316,7 @@ span {
 .event[type=join] .message,
 .event[type=part] .message
 .event[type=quite] .message {
-	font-size: 9pt;
+	font-size: 75%;
 }
 
 /*-------------------- 
@@ -357,7 +357,7 @@ span {
 	bottom: 0;
 	text-decoration: none;
 	color: rgba(255,255,255,0.7);
-	font-size: 7pt;
+	font-size: 75%;
 }
 
 /*--------------------
@@ -701,7 +701,7 @@ body[type=server] .event[type]:before {
 
 .place {
 	color: #C90064;
-	font-size: 8pt;
+	font-size: 80%;
 }
 
 /*---------------------------------
