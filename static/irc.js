@@ -74,7 +74,7 @@ Social.Irc.Handlers = {
         if (e.text) $message.text(e.text);
         if (e.html) $message.html(e.html);
 
-        $message.find('a').oembed(null, { embedMethod: "auto", maxWidth: 200 });
+        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
 
         $line
             .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
