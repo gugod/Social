@@ -8,6 +8,7 @@ use Social::Helpers;
 sub mq_publish {
     my ($self, $e) = @_;
     my $mq = Tatsumaki::MessageQueue->instance("irc");
+    $e->{channel} = $self->heap->{network} . " " . $e->{channel};
     $mq->publish({
         time => scalar localtime,
         %$e
@@ -29,11 +30,10 @@ sub new {
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
 
                 $self->mq_publish({
-                    type => "privmsg",
-                    address => "",
+                    type    => "privmsg",
                     channel => $channel,
-                    name => $who,
-                    html => Social::Helpers->format_message( Encode::decode_utf8($msg) )
+                    name    => $who,
+                    html    => Social::Helpers->format_message( Encode::decode_utf8($msg) )
                 });
             }
         },
@@ -57,9 +57,9 @@ sub new {
         join => sub {
             my ($con, $nick, $channel, $is_myself) = @_;
             $self->mq_publish({
-                type    => 'join',
-                channel => $channel,
-                name    => $nick,
+                type      => 'join',
+                channel   => $channel,
+                name      => $nick,
                 is_myself => $is_myself
             });
         },
@@ -67,9 +67,9 @@ sub new {
         part => sub {
             my ($con, $nick, $channel, $is_myself) = @_;
             $self->mq_publish({
-                type    => 'part',
-                channel => $channel,
-                name    => $nick,
+                type      => 'part',
+                channel   => $channel,
+                name      => $nick,
                 is_myself => $is_myself
             });
         },
