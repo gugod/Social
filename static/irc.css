@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+    min-height: 416px;
     -webkit-text-size-adjust: none;
 }
 

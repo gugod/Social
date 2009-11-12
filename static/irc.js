@@ -1,6 +1,10 @@
 var Social = {};
 Social.Irc = {};
 
+function hideUrlBar() {
+    window.scrollTo(0, 1);
+}
+
 function padzero(x) {
     if (x < 10) return "0" + x;
     return x;
@@ -49,7 +53,6 @@ Social.Irc.append_event_line = function(e, message_body) {
         .append($message);
 
     $channel_div_for(e.channel).prepend( $line );
-
     return $line;
 };
 
@@ -85,6 +88,20 @@ Social.Irc.Handlers = {
     }
 };
 
+Social.switch_to_next_channel = function() {
+    var current_channel = $("select[name=channel]").val();
+    var next_channel = $("select[name=channel] option[value='" + current_channel + "']").next().val();
+    if (!next_channel) return;
+    $("select[name=channel]").val(next_channel).trigger("change");
+};
+
+Social.switch_to_previous_channel = function() {
+    var current_channel = $("select[name=channel]").val();
+    var next_channel = $("select[name=channel] option[value='" + current_channel + "']").prev().val();
+    if (!next_channel) return;
+    $("select[name=channel]").val(next_channel).trigger("change");
+};
+
 $(function() {
     $("#text").focus();
 
@@ -111,6 +128,7 @@ $(function() {
     $("select[name=channel]").bind("change", function() {
         $("#channels-wrapper .channel").hide();
         $channel_div_for( $(this).val() ).show();
+        hideUrlBar();
         return false;
     });
     $("select[name=channel]").val( $("select[name=channels] option:first").val() );
@@ -129,8 +147,32 @@ if (navigator.userAgent.indexOf("iPhone") != -1) {
         else {
             $("body").addClass("landscape");
         }
+        hideUrlBar();
     };
     window.onorientationchange();
+
+    (function() {
+        var x, y;
+
+        document.body.addEventListener("touchstart", function(e) {
+            x = e.touches[0].pageX;
+            y = e.touches[0].pageY;
+        }, false);
+
+        document.body.addEventListener("touchend", function(e) {
+            var dx = e.changedTouches[0].pageX - x;
+            var dy = e.changedTouches[0].pageY - y;
+            // left to right
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 0) {
+                    Social.switch_to_next_channel();
+                }
+                else {
+                    Social.switch_to_previous_channel();
+                }
+            }
+        }, false);
+    })();
 
     $.getScript("/static/jquery.ev.js", Social.launch_polling);
 }
