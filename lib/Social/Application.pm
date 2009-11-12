@@ -4,8 +4,49 @@ use Moose;
 
 extends "Tatsumaki::Application";
 
+use Social::IRCClient;
+use Social::Helpers;
+use Social::Controller::Welcome;
+use Social::Controller::Irc;
+use Social::Controller::IrcPoll;
+use Social::Controller::IrcMultipartPoll;
+
 has config      => (is => "rw", isa => "HashRef");
-has irc_clients => (is => "rw", isa => "HashRef");
+
+has irc_clients => (is => "rw", isa => "HashRef", lazy_build => 1);
+
+sub _rules {
+    return [
+        { path => "/irc/mpoll", handler => "Social::Controller::IrcMultipartPoll" },
+        { path => "/irc/poll",  handler => "Social::Controller::IrcPoll" },
+        { path => "/irc",       handler => "Social::Controller::Irc" },
+        { path => "/",          handler => "Social::Controller::Welcome" }
+    ]
+}
+
+sub _build_irc_clients {
+    my $self = shift;
+    my $CONFIG = $self->config;
+
+    my %IRC_CLIENT;
+    while (my ($network, $config) = each %{$CONFIG->{networks}}) {
+        my $x = Social::IRCClient->new;
+        $x->heap->{config}  = $config;
+        $x->heap->{network} = $network;
+
+        $x->connect(
+            $config->{host},
+            $config->{port} || 6667,
+            {
+                nick     => $CONFIG->{nick},
+                password => $config->{password}
+            }
+        );
+
+        $IRC_CLIENT{$network} = $x;
+    }
+    return \%IRC_CLIENT;
+}
 
 sub irc_nick {
     my $self = shift;
