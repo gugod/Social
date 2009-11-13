@@ -1,8 +1,6 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use 5.010;
-
 use FindBin;
 use lib "$FindBin::Bin/lib";
 
@@ -12,17 +10,12 @@ use Getopt::Std;
 my %opts;
 getopt('cph', \%opts);
 die "Usage: $0 -c /path/to/config.yml\n" unless $opts{c};
+require Social::Application;
 
-use Social::Application;
-use Tatsumaki::Server;
-
-my $CONFIG = LoadFile($opts{c});
-
-$Tatsumaki::MessageQueue::BacklogLength = $CONFIG->{MessageQueueBacklogLength} || 1000;
-
-my $app = Social::Application->app(config => $CONFIG);
+my $app = Social::Application->app(config => LoadFile($opts{c}));
 
 if ($0 eq __FILE__) {
+    require Tatsumaki::Server;
     Tatsumaki::Server->new(
         port => $opts{p} || 9999,
         host => $opts{h},

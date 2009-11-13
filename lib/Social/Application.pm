@@ -24,6 +24,9 @@ sub app {
         "/"          => "Social::Controller::Welcome",
     ]);
     $self->config($args{config});
+
+    $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 1000;
+
     $self;
 }
 
