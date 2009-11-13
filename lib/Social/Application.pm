@@ -15,13 +15,16 @@ has config      => (is => "rw", isa => "HashRef");
 
 has irc_clients => (is => "rw", isa => "HashRef", lazy_build => 1);
 
-sub _rules {
-    return [
-        { path => "/irc/mpoll", handler => "Social::Controller::IrcMultipartPoll" },
-        { path => "/irc/poll",  handler => "Social::Controller::IrcPoll" },
-        { path => "/irc",       handler => "Social::Controller::Irc" },
-        { path => "/",          handler => "Social::Controller::Welcome" }
-    ]
+sub app {
+    my($class, %args) = @_;
+    my $self = $class->new([
+        "/irc/mpoll" => "Social::Controller::IrcMultipartPoll",
+        "/irc/poll"  => "Social::Controller::IrcPoll",
+        "/irc"       => "Social::Controller::Irc",
+        "/"          => "Social::Controller::Welcome",
+    ]);
+    $self->config($args{config});
+    $self;
 }
 
 sub _build_irc_clients {
