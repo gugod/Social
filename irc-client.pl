@@ -13,12 +13,8 @@ my %opts;
 getopt('cph', \%opts);
 die "Usage: $0 -c /path/to/config.yml\n" unless $opts{c};
 
-use Tatsumaki;
-use Tatsumaki::Error;
-use Tatsumaki::HTTPClient;
-use Tatsumaki::MessageQueue;
-use Tatsumaki::Server;
 use Social::Application;
+use Tatsumaki::Server;
 
 my $CONFIG = LoadFile($opts{c});
 
