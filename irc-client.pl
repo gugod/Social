@@ -24,7 +24,8 @@ my $CONFIG = LoadFile($opts{c});
 
 $Tatsumaki::MessageQueue::BacklogLength = $CONFIG->{MessageQueueBacklogLength} || 1000;
 
-my $app = Social::Application->new(config => $CONFIG);
+my $app = Social::Application->new;
+$app->config($CONFIG);
 
 if ($0 eq __FILE__) {
     Tatsumaki::Server->new(
