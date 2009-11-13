@@ -1,12 +1,12 @@
 body {
     margin: 0;
     padding: 0;
-    min-height: 416px;
     -webkit-text-size-adjust: none;
 }
 
 h1 {
     font-size: 1.5em;
+    margin: 0.5em auto;
 }
 #messages {
     margin: 1em 0;
@@ -19,11 +19,7 @@ h1 {
     padding: 0 0 0 30px;
 }
 
-.chat-message .name {
-    font-weight: bold;
-}
-
-#irc {
+.channel > form {
     height: 40px;
     line-height: 40px;
     background: #ccc;
@@ -31,30 +27,13 @@ h1 {
     margin: 0;
 }
 
-#irc a {
-    display: block;
-    float: left;
-    margin: 2px 0 0 7px;
-}
-
-#irc select[name=channel] {
-    width: 80px;
-    margin-left: 6px;
-}
-
-#irc input[name=text] {
-    width: 160px;
+input[name=text] {
+    width: 80%;
 }
 
 .channel {
-    display: none;
     padding: 0;
     margin: 0;
-}
-
-#channels-wrapper {
-    margin: 0;
-    padding: 0;
 }
 
 body.landscape {

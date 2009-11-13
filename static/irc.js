@@ -1,9 +1,7 @@
+var jQT = new $.jQTouch();
+
 var Social = {};
 Social.Irc = {};
-
-function hideUrlBar() {
-    window.scrollTo(0, 1);
-}
 
 function padzero(x) {
     if (x < 10) return "0" + x;
@@ -34,10 +32,6 @@ function time_text(x) {
 var $channel_div_for = function(channel) {
     var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
 
-    if ($("#" + channel_el_id).size() == 0) {
-        $("<div/>").appendTo("#channels-wrapper").attr({ "id": channel_el_id, "class": "channel" }).html("");
-    }
-
     return $("#" + channel_el_id);
 }
 
@@ -52,7 +46,7 @@ Social.Irc.append_event_line = function(e, message_body) {
         .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
         .append($message);
 
-    $channel_div_for(e.channel).prepend( $line );
+    $channel_div_for(e.channel).find(".messages").prepend( $line );
     return $line;
 };
 
@@ -84,100 +78,45 @@ Social.Irc.Handlers = {
             .append( $('<span/>').addClass('sender').text(name + ": ") )
             .append($message);
 
-        $channel_div_for(e.channel).prepend( $line );
+        $channel_div_for(e.channel).find(".messages").prepend( $line );
     }
 };
 
-Social.switch_to_next_channel = function() {
-    var current_channel = $("select[name=channel]").val();
-    var next_channel = $("select[name=channel] option[value='" + current_channel + "']").next().val();
-    if (!next_channel) return;
-    $("select[name=channel]").val(next_channel).trigger("change");
-};
-
-Social.switch_to_previous_channel = function() {
-    var current_channel = $("select[name=channel]").val();
-    var next_channel = $("select[name=channel] option[value='" + current_channel + "']").prev().val();
-    if (!next_channel) return;
-    $("select[name=channel]").val(next_channel).trigger("change");
-};
-
 $(function() {
-    $("#text").focus();
-
-    $("form#irc").bind("submit", function() {
-        var text = $("#text").val();
-
-        if (!text) return false;
-
-        $(this).attr("disabled", "disabled");
-
+    $(".channel > form").bind("submit", function() {
+        var self = this;
         $.ajax({
             url: "/irc",
             data: $(this).serialize(),
             type: 'post',
             dataType: 'json',
             success: function(r) {
-                $("#text").val("").focus();
-                $(this).removeAttr("disabled");
+                $("input[name=text]", self).val("").focus();
             }
         });
         return false;
     });
 
-    $("select[name=channel]").bind("change", function() {
-        $("#channels-wrapper .channel").hide();
-        $channel_div_for( $(this).val() ).show();
-        hideUrlBar();
-        return false;
-    });
-    $("select[name=channel]").val( $("select[name=channels] option:first").val() );
-    $("select[name=channel]").trigger("change");
-});
-
-if (navigator.userAgent.indexOf("iPhone") != -1) {
-    if (navigator.standalone) {
-        $("body").addClass("full-screen");
+    if (navigator.userAgent.indexOf("iPhone") != -1) {
+        if (navigator.standalone) {
+            $("body").addClass("full-screen");
+        }
+        $.getScript("/static/jquery.ev.js", Social.launch_polling);
+    }
+    else {
+        $.getScript("/static/DUI.js", function() {
+            $.getScript("/static/Stream.js", Social.launch_polling)
+        });
     }
 
-    window.onorientationchange = function() {
-        if (window.orientation == 0 || window.orientation == 180) {
-            $("body").removeClass("landscape");
-        }
-        else {
-            $("body").addClass("landscape");
-        }
-        hideUrlBar();
-    };
-    window.onorientationchange();
+    setTimeout(function() {
+        jQT.goTo("#" + $(".channel:first").attr("id"), "cube" );
+    }, 3000);
 
-    (function() {
-        var x, y;
-
-        document.body.addEventListener("touchstart", function(e) {
-            x = e.touches[0].pageX;
-            y = e.touches[0].pageY;
-        }, false);
-
-        document.body.addEventListener("touchend", function(e) {
-            var dx = e.changedTouches[0].pageX - x;
-            var dy = e.changedTouches[0].pageY - y;
-            // left to right
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (dx > 0) {
-                    Social.switch_to_next_channel();
-                }
-                else {
-                    Social.switch_to_previous_channel();
-                }
-            }
-        }, false);
-    })();
-
-    $.getScript("/static/jquery.ev.js", Social.launch_polling);
-}
-else {
-    $.getScript("/static/DUI.js", function() {
-        $.getScript("/static/Stream.js", Social.launch_polling)
+    $(".channel h1").bind("click", function(e) {
+        var n = $(".channel.current").next();
+        if (n.size() == 0)
+            n = $(".channel:first")
+        jQT.goTo("#" + n.attr("id"), "cube" );
     });
-}
+});
