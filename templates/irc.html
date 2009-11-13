@@ -22,18 +22,24 @@
     </head>
     <body>
         <div id="welcome" class="fade in">
-            <h1 style="text-align: center; margin: 150px 0 0 0;">Social</h1>
+            <h1>Social :: IRC</h1>
+            <ul>
+                <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
+                <li><a href="#channel-<%= $name->[0] %>"><%= $name->[1] %></a></li>
+                <% } %>
+            </ul>
         </div>
 
-        <% for my $name (map { my $o = $_; $_ = lc($_); s/([^0-9a-z])/ord($1)/eg; [$_, $o]; } @$channels) { %>
-        <div id="channel-<%= $name->[0] %>" class="channel">
+        <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
+        <div id="channel-<%= $name->[0] %>" class="channel cube">
             <h1><%= $name->[1] %></h1>
-            <form action="#">
+            <form action="/irc">
                 <div>
                     <input type="hidden" name="ident" value="<%= $nick %>" />
                     <input type="hidden" name="channel" value="<%= $name->[1] %>" />
-                    <input name="text" type="text"/>
-                    <input type="image" src="/static/09-chat2.png" height="15" />
+                    <input type="text"   name="text" />
+                    <input type="image"  class="submit" src="/static/09-chat2.png" />
+                    <input type="submit"  class="submit" />
                 </div>
             </form>
 

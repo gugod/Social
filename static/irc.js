@@ -1,4 +1,4 @@
-var jQT = new $.jQTouch();
+var jQT = new $.jQTouch({});
 
 var Social = {};
 Social.Irc = {};
@@ -83,7 +83,7 @@ Social.Irc.Handlers = {
 };
 
 $(function() {
-    $(".channel > form").bind("submit", function() {
+    $("form").bind("submit", function() {
         var self = this;
         $.ajax({
             url: "/irc",
@@ -109,14 +109,7 @@ $(function() {
         });
     }
 
-    setTimeout(function() {
-        jQT.goTo("#" + $(".channel:first").attr("id"), "cube" );
-    }, 3000);
-
     $(".channel h1").bind("click", function(e) {
-        var n = $(".channel.current").next();
-        if (n.size() == 0)
-            n = $(".channel:first")
-        jQT.goTo("#" + n.attr("id"), "cube" );
+        jQT.goTo("#welcome");
     });
 });
