@@ -15,9 +15,9 @@ use Social::TwitterClient;
 
 has config      => (is => "rw", isa => "HashRef");
 
-has irc_clients => (is => "rw", isa => "HashRef", lazy_build => 1);
+has irc_clients => (is => "ro", isa => "HashRef", lazy_build => 1);
 
-has twitter_client => (is => "rw", isa => "Social::TwitterClient", lazy_build => 1);
+has twitter_client => (is => "ro", isa => "Social::TwitterClient", lazy_build => 1);
 
 sub app {
     my($class, %args) = @_;
@@ -31,7 +31,9 @@ sub app {
 
     $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 1000;
 
-    $self;
+    my $my_clients = $self->irc_clients;
+
+    return $self;
 }
 
 sub _build_twitter_client {
@@ -74,11 +76,7 @@ sub irc_send {
     my $self = shift;
     my ($cmd, $target, @params) = @_;
 
-    print "Send @_";
-
     my ($network, $channel) = split(" ", $target, 2);
-
-    print "Send to $network, $channel\n";
 
     my $client = $self->irc_clients->{$network}
         or die "Unknown network: $network\n";
