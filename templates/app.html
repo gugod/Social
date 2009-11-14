@@ -33,8 +33,28 @@
                 <h1>Twitter</h1>
                 <a href="#dashboard" class="button back leftButton">Dashboard</a>
             </div>
+            <ul>
+                <li><a href="#twitter-statuses-friends" class="cube">Friends</a></li>
+                <li><a href="#twitter-statuses-mentions" class="cube">@<%= $nick %></a></li>
+            </ul>
+        </div>
+
+        <div id="twitter-statuses-friends" class="cube">
+            <div class="toolbar">
+                <h1>Friends</h1>
+                <a href="#twitter" class="button back leftButton">Twitter</a>
+            </div>
             <div class="messages"></div>
         </div>
+        <div id="twitter-statuses-mentions" class="cube">
+            <div class="toolbar">
+                <h1>@<%= $nick %></h1>
+                <a href="#twitter" class="button back leftButton">Twitter</a>
+            </div>
+            <div class="messages"></div>
+        </div>
+
+
 
         <div id="irc-channels" class="cube">
             <div class="toolbar">

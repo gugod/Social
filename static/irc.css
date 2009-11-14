@@ -14,3 +14,7 @@ input[name=text] {
     margin: 0 0.5em;
     padding: 0 0.5em;
 }
+
+.messages img {
+    max-width: 100%;
+}

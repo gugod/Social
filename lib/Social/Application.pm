@@ -13,11 +13,24 @@ use Social::Controller::Irc;
 use Social::IRCClient;
 use Social::TwitterClient;
 
-has config      => (is => "rw", isa => "HashRef");
+has config => (
+    is  => "rw",
+    isa => "HashRef"
+);
 
-has irc_clients => (is => "ro", isa => "HashRef", lazy_build => 1);
+has irc_clients => (
+    is         => "ro",
+    isa        => "HashRef",
+    required   => 1,
+    lazy_build => 1
+);
 
-has twitter_client => (is => "ro", isa => "Social::TwitterClient", lazy_build => 1);
+has twitter_client => (
+    is         => "ro",
+    isa        => "Social::TwitterClient",
+    required   => 1,
+    lazy_build => 1
+);
 
 sub app {
     my($class, %args) = @_;
@@ -31,7 +44,8 @@ sub app {
 
     $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 1000;
 
-    my $my_clients = $self->irc_clients;
+    $self->irc_clients;
+    $self->twitter_client;
 
     return $self;
 }
@@ -39,7 +53,7 @@ sub app {
 sub _build_twitter_client {
     my $self = shift;
 
-    return Social::TiwtterClient->app(config => $self->config->{twitter});
+    return Social::TwitterClient->app(config => $self->config->{twitter});
 }
 
 sub _build_irc_clients {

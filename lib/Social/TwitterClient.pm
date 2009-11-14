@@ -3,6 +3,8 @@ use Moose;
 use AnyEvent::Twitter;
 use Social::Helpers;
 
+use encoding 'utf8';
+
 has config => (
     is => "rw",
     isa => "HashRef"
@@ -11,6 +13,7 @@ has config => (
 has twitty => (
     is => "rw",
     isa => "AnyEvent::Twitter",
+    required => 1,
     lazy_build => 1
 );
 
@@ -30,21 +33,22 @@ sub _build_twitty {
         password => $self->config->{password},
     );
 
-    my $publish = sub {
-        my ($twitty, @statuses) = @_;
-        for (@statuses) {
-            my ($pp_status, $raw_status) = @$_;
-            Social::Helpers->mq_publish({
-                type => "twitter",
-                nick => $pp_status->{screen_name},
-                text => $pp_status->{text},
-            });
+    my $build_publisher = sub {
+        my $type = shift;
+        return sub {
+            my ($twitty, @statuses) = @_;
+            for (@statuses) {
+                my (undef, $status) = @$_;
+                $status->{type} = $type;
+                $status->{html} = Social::Helpers->format_message($status->{text});
+                Social::Helpers->mq_publish($status);
+            }
         }
     };
 
     $twitty->reg_cb(
-        statuses_friends  => $publish,
-        statuses_mentions => $publish,
+        statuses_friends  => $build_publisher->("twitter_statuses_friends"),
+        statuses_mentions => $build_publisher->("twitter_statuses_mentions"),
     );
 
     $twitty->receive_statuses_friends;

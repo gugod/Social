@@ -67,10 +67,39 @@ Social.Irc.append_event_line = function(e, message_body) {
     return $line;
 };
 
+Social.Twitter = {
+    build_status_line: function(e) {
+        var type   = "text";
+        var name   = e.user.screen_name;
+
+        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
+
+        var $message = $('<span/>').attr({"class": "message", "type": e.type });
+        if (e.text) $message.text(e.text);
+        if (e.html) $message.html(e.html);
+
+        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
+
+        $line
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
+            .append( $('<span/>').addClass('sender').text(name + ": ") )
+            .append($message);
+
+        return $line;
+    }
+};
+
+
 Social.Handlers = {
-    "twitter": function(e) {
-        console.log(e);
+    "twitter_statuses_friends": function(e) {
+        var $line = Social.Twitter.build_status_line(e);
+        $("#twitter-statuses-friends .messages").prepend( $line );
     },
+    "twitter_statuses_mentions": function(e) {
+        var $line = Social.Twitter.build_status_line(e);
+        $("#twitter-statuses-mentions .messages").prepend( $line );
+    },
+
     "join": function(e) {
         var name   = e.name || e.ident || 'Anonymous';
         Social.Irc.append_event_line(e, name + " has joined " + e.channel);
