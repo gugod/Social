@@ -16,14 +16,15 @@ installed:
 - Plack
 - Plack::Request
 - Tatsumaki
+- AnyEvent::Twitter
 
-Running IRC Client
-------------------
+Running It
+----------
 
 Running the IRC Client program requires you to specify the config file
 path.
 
-    perl ./irc-client.pl -c /path/to/config.yml
+    perl ./social.pl -c /path/to/config.yml
 
-See config/irc.yml for the example and description of the configrable
+See config/social.yml for the example and description of the configrable
 content.
