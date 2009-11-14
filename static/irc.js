@@ -1,4 +1,21 @@
-var jQT = new $.jQTouch({});
+var jQT = new $.jQTouch({
+    formSelector: "form.not-used",
+    useFastTouch: false,
+    cacheGetRequests: false,
+    preloadImages: [
+        "/static/themes/vicutake/vicutake/famfamfam/cog.png",
+        "/static/themes/vicutake/vicutake/famfamfam/lightbulb.png",
+        "/static/themes/vicutake/vicutake/images/bg.png",
+        "/static/themes/vicutake/vicutake/images/or_aqua1.png",
+        "/static/themes/vicutake/vicutake/images/or_aqua2.png",
+        "/static/themes/vicutake/vicutake/images/or_light1.png",
+        "/static/themes/vicutake/vicutake/images/or_light2.png",
+        "/static/themes/vicutake/vicutake/images/or_light2_check1.png",
+        "/static/themes/vicutake/vicutake/images/or_light2_cross1.png",
+        "/static/themes/vicutake/vicutake/images/or_lightwave1.png",
+        "/static/themes/vicutake/vicutake/images/shadow.png"
+    ]
+});
 
 var Social = {};
 Social.Irc = {};
@@ -85,12 +102,15 @@ Social.Irc.Handlers = {
 $(function() {
     $("form").bind("submit", function() {
         var self = this;
+
+        $(this).attr("disabled", "disabled");
         $.ajax({
             url: "/irc",
             data: $(this).serialize(),
             type: 'post',
             dataType: 'json',
             success: function(r) {
+                $(this).removeAttr("disabled");
                 $("input[name=text]", self).val("").focus();
             }
         });
@@ -108,8 +128,4 @@ $(function() {
             $.getScript("/static/Stream.js", Social.launch_polling)
         });
     }
-
-    $(".channel h1").bind("click", function(e) {
-        jQT.goTo("#welcome");
-    });
 });
