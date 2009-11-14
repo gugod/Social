@@ -21,10 +21,12 @@ installed:
 Running It
 ----------
 
-Running the IRC Client program requires you to specify the config file
-path.
+At this point, you do not install the Social itself in order to run it.
+Just cd into the source tree and execute the "social" program.
 
-    perl ./social.pl -c /path/to/config.yml
+You need to provide a path to your config file like this:
+
+    ./social -c /path/to/config.yml
 
 See config/social.yml for the example and description of the configrable
 content.
