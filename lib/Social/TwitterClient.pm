@@ -37,7 +37,7 @@ sub _build_twitty {
         my $type = shift;
         return sub {
             my ($twitty, @statuses) = @_;
-            for (@statuses) {
+            for (reverse @statuses) {
                 my (undef, $status) = @$_;
                 $status->{type} = $type;
                 $status->{html} = Social::Helpers->format_message($status->{text});
