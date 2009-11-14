@@ -4,24 +4,28 @@ use Moose;
 
 extends "Tatsumaki::Application";
 
-use Social::IRCClient;
 use Social::Helpers;
-use Social::Controller::Welcome;
+use Social::Controller::Dashboard;
+use Social::Controller::Poll;
+use Social::Controller::MultipartPoll;
 use Social::Controller::Irc;
-use Social::Controller::IrcPoll;
-use Social::Controller::IrcMultipartPoll;
+
+use Social::IRCClient;
+use Social::TwitterClient;
 
 has config      => (is => "rw", isa => "HashRef");
 
 has irc_clients => (is => "rw", isa => "HashRef", lazy_build => 1);
 
+has twitter_client => (is => "rw", isa => "Social::TwitterClient", lazy_build => 1);
+
 sub app {
     my($class, %args) = @_;
     my $self = $class->new([
-        "/irc/mpoll" => "Social::Controller::IrcMultipartPoll",
-        "/irc/poll"  => "Social::Controller::IrcPoll",
+        "/mpoll"     => "Social::Controller::MultipartPoll",
+        "/poll"      => "Social::Controller::Poll",
         "/irc"       => "Social::Controller::Irc",
-        "/"          => "Social::Controller::Welcome",
+        "/"          => "Social::Controller::Dashboard",
     ]);
     $self->config($args{config});
 
@@ -30,9 +34,16 @@ sub app {
     $self;
 }
 
+sub _build_twitter_client {
+    my $self = shift;
+
+    return Social::TiwtterClient->app(config => $self->config->{twitter});
+}
+
 sub _build_irc_clients {
     my $self = shift;
-    my $CONFIG = $self->config;
+
+    my $CONFIG = $self->config->{irc};
 
     my %IRC_CLIENT;
     while (my ($network, $config) = each %{$CONFIG->{networks}}) {
@@ -56,14 +67,18 @@ sub _build_irc_clients {
 
 sub irc_nick {
     my $self = shift;
-    return $self->config->{nick};
+    return $self->config->{irc}{nick};
 }
 
 sub irc_send {
     my $self = shift;
     my ($cmd, $target, @params) = @_;
 
+    print "Send @_";
+
     my ($network, $channel) = split(" ", $target, 2);
+
+    print "Send to $network, $channel\n";
 
     my $client = $self->irc_clients->{$network}
         or die "Unknown network: $network\n";

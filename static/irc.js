@@ -27,16 +27,16 @@ function padzero(x) {
 
 Social.launch_polling = function() {
     if ($.ev) {
-        $.ev.loop('/irc/poll?session=' + Date.now(), Social.Irc.Handlers);
+        $.ev.loop('/poll?session=' + Date.now(), Social.Handlers);
     }
     else {
         var s = new DUI.Stream();
         s.listen('application/json', function(payload) {
             var e = eval('(' + payload + ')');
-            var f = Social.Irc.Handlers[e.type];
+            var f = Social.Handlers[e.type];
             if ($.isFunction(f)) f(e);
         });
-        s.load('/irc/mpoll?session=' + Date.now());
+        s.load('/mpoll?session=' + Date.now());
     }
 }
 
@@ -67,7 +67,10 @@ Social.Irc.append_event_line = function(e, message_body) {
     return $line;
 };
 
-Social.Irc.Handlers = {
+Social.Handlers = {
+    "twitter": function(e) {
+        console.log(e);
+    },
     "join": function(e) {
         var name   = e.name || e.ident || 'Anonymous';
         Social.Irc.append_event_line(e, name + " has joined " + e.channel);

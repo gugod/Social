@@ -1,8 +1,10 @@
 package Social::Controller::Irc;
-use Moose;
+use strict;
+use warnings;
 
-extends "Tatsumaki::Handler";
+use parent "Tatsumaki::Handler";
 
+use Social::Helpers;
 use Encode ();
 
 sub get {
@@ -14,22 +16,20 @@ sub get {
     });
 }
 
+use YAML;
+
 sub post {
     my ($self) = @_;
 
     my $v = $self->request->params;
-
     $self->application->irc_send('privmsg', $v->{channel}, Encode::encode_utf8($v->{text}));
 
     my $html = Social::Helpers->format_message($v->{text});
-
-    my $mq = Tatsumaki::MessageQueue->instance("irc");
-    $mq->publish({
+    Social::Helpers->mq_publish({
         type    => "privmsg",
         html    => $html,
         ident   => $v->{ident},
         channel => $v->{channel},
-        avatar  => $v->{avatar},
         name    => $v->{name},
         address => $self->request->address,
         time    => scalar localtime(time),
@@ -38,7 +38,4 @@ sub post {
     $self->write({ success => 1 });
 }
 
-
-__PACKAGE__->meta->make_immutable;
-no Moose;
 1;

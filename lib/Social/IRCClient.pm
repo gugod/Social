@@ -5,16 +5,6 @@ use base 'AnyEvent::IRC::Client';
 use Tatsumaki::MessageQueue;
 use Social::Helpers;
 
-sub mq_publish {
-    my ($self, $e) = @_;
-    my $mq = Tatsumaki::MessageQueue->instance("irc");
-    $e->{channel} = $self->heap->{network} . " " . $e->{channel};
-    $mq->publish({
-        time => scalar localtime,
-        %$e
-    });
-}
-
 sub new {
     my ($class) = @_;
     my $self = AnyEvent::IRC::Client->new;
@@ -29,9 +19,9 @@ sub new {
                 my $msg = $packet->{params}[1];
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
 
-                $self->mq_publish({
+                Social::Helpers->mq_publish({
                     type    => "privmsg",
-                    channel => $channel,
+                    channel => $self->heap->{network} . " " . $channel,
                     name    => $who,
                     html    => Social::Helpers->format_message( Encode::decode_utf8($msg) )
                 });
@@ -56,9 +46,9 @@ sub new {
 
         join => sub {
             my ($con, $nick, $channel, $is_myself) = @_;
-            $self->mq_publish({
+            Social::Helpers->mq_publish({
                 type      => 'join',
-                channel   => $channel,
+                channel => $self->heap->{network} . " " . $channel,
                 name      => $nick,
                 is_myself => $is_myself
             });
@@ -66,9 +56,9 @@ sub new {
 
         part => sub {
             my ($con, $nick, $channel, $is_myself) = @_;
-            $self->mq_publish({
+            Social::Helpers->mq_publish({
                 type      => 'part',
-                channel   => $channel,
+                channel => $self->heap->{network} . " " . $channel,
                 name      => $nick,
                 is_myself => $is_myself
             });
