@@ -7,17 +7,6 @@ use parent "Tatsumaki::Handler";
 use Social::Helpers;
 use Encode ();
 
-sub get {
-    my ($self) = @_;
-
-    $self->render('irc.html', {
-        channels => $self->application->irc_channels,
-        nick     => $self->application->irc_nick,
-    });
-}
-
-use YAML;
-
 sub post {
     my ($self) = @_;
 
