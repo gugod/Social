@@ -1,5 +1,5 @@
 var jQT = new $.jQTouch({
-    formSelector: "form.not-used",
+    formSelector: "form#not-used",
     useFastTouch: false,
     cacheGetRequests: false,
     preloadImages: [
@@ -101,6 +101,8 @@ Social.Irc.Handlers = {
 
 $(function() {
     $("form").bind("submit", function() {
+        if ($("input[name=text]", this).val().match(/^\s*$/)) return false;
+
         var self = this;
 
         $(this).attr("disabled", "disabled");

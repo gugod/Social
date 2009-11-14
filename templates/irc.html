@@ -19,36 +19,38 @@
         <title>IRC</title>
         <style type="text/css" media="screen">
           @import url(/static/jqtouch.min.css);
+          @import url(/static/themes/apple/theme.min.css);
           @import url(/static/irc.css);
           @import url(/static/themes/vicutake/vicutake.css);
         </style>
 
     </head>
     <body>
-        <div id="welcome" class="fade">
-            <h1>Social :: IRC</h1>
+        <div id="welcome" class="cube">
+            <div class="toolbar">
+                <h1>Channels</h1>
+            </div>
             <ul>
                 <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
-                <li><a href="#channel-<%= $name->[0] %>"><%= $name->[1] %></a></li>
+                <li><a href="#channel-<%= $name->[0] %>" class="cube"><%= $name->[1] %></a></li>
                 <% } %>
             </ul>
         </div>
 
-        <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
+        <% for my $name (map { my $o = $_; my $e = lc($_); my ($network, $channel) = split(" ", $e); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o, $network, $channel]; } @$channels) { %>
         <div id="channel-<%= $name->[0] %>" class="channel cube">
-            <h1>
-                <a href="#welcome">Channels</a> :: <%= $name->[1] %>
-            </h1>
+            <div class="toolbar">
+                <h1><%= $name->[3] %></h1>
+                <a href="#welcome" class="button leftButton">Channels</a>
+            </div>
             <form action="/irc" method="post">
                 <div>
                     <input type="hidden" name="ident" value="<%= $nick %>" />
                     <input type="hidden" name="channel" value="<%= $name->[1] %>" />
                     <input type="text"   name="text" />
                     <input type="image"  class="submit" src="/static/09-chat2.png" />
-                    <input type="submit"  class="submit" />
                 </div>
             </form>
-
             <div class="messages"></div>
         </div>
         <% } %>

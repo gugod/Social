@@ -1,63 +1,16 @@
-body {
-    margin: 0;
-    padding: 0;
-    -webkit-text-size-adjust: none;
-}
-
-h1 {
-    font-size: 1.5em;
-    margin: 0.5em auto;
-}
-#messages {
-    margin: 1em 0;
-}
-
-.chat-message {
-    vertical-align: middle;
-    min-height: 30px;
-    margin: 0 5px 5px 0;
-    padding: 0 0 0 30px;
-}
-
 .channel > form {
-    height: 40px;
-    line-height: 40px;
-    background: #ccc;
+    vertical-align: center;
+    height: 3em;
+    line-height: 3em;
+    background: #eee;
     padding: 0;
     margin: 0;
 }
 
 input[name=text] {
-    width: 60%;
-}
-
-.channel {
-    padding: 0;
-    margin: 0;
-}
-
-body.landscape {
-    width: 480px;
-    height: 216px;
-}
-body.landscape #channels-wrapper {
-    height: 166px;
-}
-
-body.landscape #irc input[name=text] {
-    width: 300px;
-}
-
-body.full-screen {
-    height: 460px;
-}
-body.full-screen #channels-wrapper {
-    height: 404px;
-}
-
-body.full-screen.landscape {
-    height: 300px;
-}
-body.full-screen.landscape #channels-wrapper {
-    height: 250px;
+    width: 75%;
+    font-size: 1.2em;
+    height: 1.5em;
+    margin: 0 0.5em;
+    padding: 0 0.5em;
 }
