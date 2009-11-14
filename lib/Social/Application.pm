@@ -9,6 +9,7 @@ use Social::Controller::Dashboard;
 use Social::Controller::Poll;
 use Social::Controller::MultipartPoll;
 use Social::Controller::Irc;
+use Social::Controller::Twitter;
 
 use Social::IRCClient;
 use Social::TwitterClient;
@@ -38,6 +39,7 @@ sub app {
         "/mpoll"     => "Social::Controller::MultipartPoll",
         "/poll"      => "Social::Controller::Poll",
         "/irc"       => "Social::Controller::Irc",
+        "/twitter"   => "Social::Controller::Twitter",
         "/"          => "Social::Controller::Dashboard",
     ]);
     $self->config($args{config});

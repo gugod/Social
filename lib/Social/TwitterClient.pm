@@ -57,6 +57,11 @@ sub _build_twitty {
     return $twitty;
 }
 
+sub update_status {
+    my ($self, $status) = @_;
+    $self->twitty->update_status($status, sub {});
+}
+
 __PACKAGE__->meta->make_immutable;
 no Moose;
 1;

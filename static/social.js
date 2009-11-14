@@ -139,7 +139,7 @@ $(function() {
 
         $(this).attr("disabled", "disabled");
         $.ajax({
-            url: "/irc",
+            url: $(this).attr("action"),
             data: $(this).serialize(),
             type: 'post',
             dataType: 'json',
