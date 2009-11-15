@@ -16,5 +16,8 @@ input[name=text] {
 }
 
 .messages img {
-    max-width: 100%;
+    display: block;
+    margin: 10px auto;
+    max-width: 250px;
+    max-height: 250px;
 }
