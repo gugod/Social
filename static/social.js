@@ -13,7 +13,7 @@ function padzero(x) {
 };
 
 Social.launch_polling = function() {
-    if ($.ev) {
+    if (typeof DUI == "undefined") {
         $.ev.loop('/poll?session=' + Date.now(), Social.Handlers);
     }
     else {
@@ -79,7 +79,7 @@ Social.Twitter = {
 Social.Plurk = {
     build_line: function(e) {
         var type   = "text";
-        var name   = e.user ? e.user.nick_name : e.owner_id;
+        var name   = e.owner ? e.owner.nick_name : e.owner_id;
 
         var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
 
@@ -91,7 +91,7 @@ Social.Plurk = {
 
         $line
             .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-            .append( $('<span/>').addClass('sender').html("<a href=\"http://www.plurk.com/" + name +"\">" + name + "</a>: ") )
+            .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" href=\"http://www.plurk.com/" + name +"\">" + name + "</a>: ") )
             .append($message);
 
         return $line;
@@ -110,6 +110,7 @@ Social.Handlers = {
     },
 
     "plurk": function(e) {
+        console.log(e);
         var $line = Social.Plurk.build_line(e);
         $("#plurk .messages").prepend( $line );
     },
@@ -186,9 +187,8 @@ $(function() {
         Social.launch_polling();
     }
     else {
-        Social.launch_polling();
-        // $.getScript("/static/DUI.js", function() {
-        //     $.getScript("/static/Stream.js", Social.launch_polling)
-        // });
+        $.getScript("/static/DUI.js", function() {
+            $.getScript("/static/Stream.js", Social.launch_polling)
+        });
     }
 });

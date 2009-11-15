@@ -26,6 +26,6 @@ input[name=text] {
     max-height: 250px;
 }
 
-#twitter-statuses-friends .messages .line:nth-child(50) ~ * {
+.messages .line:nth-child(50) ~ * {
     display: none;
 }

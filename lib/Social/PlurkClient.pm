@@ -32,22 +32,18 @@ sub _build_plurky {
     );
 
     $p->reg_cb(
-        latest_owner_plurks => sub {
+        unread_plurks => sub {
             my ($p, $plurks) = @_;
-            my $meta = $p->{_plurk}->meta;
-            for my $pu (@$plurks) {
-                my $user = $meta->{friends}{$pu->{owner_id}} || $meta->{fans}{$pu->{owner_id}};
 
+            for my $pu (reverse @$plurks) {
                 Social::Helpers->mq_publish({
                     %$pu,
                     type => "plurk",
-                    html => Social::Helpers->format_message($pu->{content_raw}),
-                    user => $user
+                    html => Social::Helpers->format_message($pu->{content_raw})
                 });
             }
         }
     );
-
     return $p;
 }
 

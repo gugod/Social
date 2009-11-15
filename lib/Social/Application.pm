@@ -52,9 +52,10 @@ sub app {
 
     $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 300;
 
-    $self->irc_clients;
+    $self->irc_clients    if $args{config}->{irc};
     $self->twitter_client if $args{config}->{twitter};
-    $self->plurk_client if $args{config}->{plurk};
+    $self->plurk_client   if $args{config}->{plurk};
+
     return $self;
 }
 
@@ -62,7 +63,7 @@ sub _build_plurk_client {
     my $self = shift;
     my $x = $self->config->{plurk};
 
-    return undef unless defined $x;
+    return undef unless $x;
     return Social::PlurkClient->app(config => $x);
 }
 
@@ -70,7 +71,7 @@ sub _build_twitter_client {
     my $self = shift;
     my $x = $self->config->{twitter};
 
-    return undef unless defined $x;
+    return undef unless $x;
     return Social::TwitterClient->app(config => $x);
 }
 
@@ -78,7 +79,7 @@ sub _build_irc_clients {
     my $self = shift;
 
     my $CONFIG = $self->config->{irc};
-    return undef unless defined($CONFIG);
+    return undef unless $CONFIG;
 
     my %IRC_CLIENT;
     while (my ($network, $config) = each %{$CONFIG->{networks}}) {
