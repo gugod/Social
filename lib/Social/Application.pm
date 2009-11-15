@@ -44,7 +44,7 @@ sub app {
     ]);
     $self->config($args{config});
 
-    $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 1000;
+    $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 300;
 
     $self->irc_clients;
     $self->twitter_client;
