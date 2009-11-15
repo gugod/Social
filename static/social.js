@@ -1,20 +1,7 @@
 var jQT = new $.jQTouch({
     formSelector: "form#not-used",
     useFastTouch: false,
-    cacheGetRequests: false,
-    preloadImages: [
-        "/static/themes/vicutake/vicutake/famfamfam/cog.png",
-        "/static/themes/vicutake/vicutake/famfamfam/lightbulb.png",
-        "/static/themes/vicutake/vicutake/images/bg.png",
-        "/static/themes/vicutake/vicutake/images/or_aqua1.png",
-        "/static/themes/vicutake/vicutake/images/or_aqua2.png",
-        "/static/themes/vicutake/vicutake/images/or_light1.png",
-        "/static/themes/vicutake/vicutake/images/or_light2.png",
-        "/static/themes/vicutake/vicutake/images/or_light2_check1.png",
-        "/static/themes/vicutake/vicutake/images/or_light2_cross1.png",
-        "/static/themes/vicutake/vicutake/images/or_lightwave1.png",
-        "/static/themes/vicutake/vicutake/images/shadow.png"
-    ]
+    cacheGetRequests: false
 });
 
 var Social = {};
