@@ -119,6 +119,23 @@ Social.Handlers = {
 };
 
 $(function() {
+    $("#twitter-button-toggle-all-statuses")
+        .bind("click", function() {
+            var $this = $(this);
+            if ($this.data("showing") == "all") {
+                $("#twitter-show-all-statuses-style").remove();
+                $this.data("showing", "recent").text("Show all tweets");;
+            }
+            else {
+                $("<style/>")
+                    .attr("id", "twitter-show-all-statuses-style")
+                    .text("#twitter-statuses-friends .messages .line:nth-child(50) ~ * { display: block; }")
+                    .appendTo("head");
+                $this.data("showing", "all").text("Show ony recent tweets");
+            }
+            return false;
+        });
+
     $("form").bind("submit", function() {
         if ($("input[name=text]", this).val().match(/^\s*$/)) return false;
 

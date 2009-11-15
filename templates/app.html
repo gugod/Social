@@ -18,21 +18,21 @@
         </style>
     </head>
     <body>
-        <div id="dashboard" class="cube">
+        <div id="dashboard" class="">
             <div class="toolbar">
                 <h1>Dashboard</h1>
             </div>
             <ul>
-                <li><a href="#twitter-statuses-friends" class="cube">Twitter</a></li>
-                <li><a href="#irc-channels" class="cube">IRC</a></li>
+                <li><a href="#twitter-statuses-friends" class="">Twitter</a></li>
+                <li><a href="#irc-channels" class="">IRC</a></li>
             </ul>
         </div>
 
-        <div id="twitter-statuses-friends" class="cube">
+        <div id="twitter-statuses-friends" class="">
             <div class="toolbar">
                 <h1>Twitter</h1>
                 <a href="#dashboard" class="button back">Dashboard</a>
-                <a href="#twitter-statuses-mentions" class="cube button blueButton">@<%= $nick %></a>
+                <a href="#twitter-statuses-mentions" class=" button blueButton">@<%= $nick %></a>
             </div>
 
             <form action="/twitter" method="post">
@@ -42,9 +42,12 @@
                 </div>
             </form>
             <div class="messages"></div>
+            <div class="toolbar">
+                <a href="#" class="button" id="twitter-button-toggle-all-statuses">Show all tweets</a>
+            </div>
         </div>
 
-        <div id="twitter-statuses-mentions" class="cube">
+        <div id="twitter-statuses-mentions" class="">
             <div class="toolbar">
                 <h1>@<%= $nick %></h1>
                 <a href="#twitter-statuses-friends" class="button back leftButton">Twitter</a>
@@ -52,20 +55,20 @@
             <div class="messages"></div>
         </div>
 
-        <div id="irc-channels" class="cube">
+        <div id="irc-channels" class="">
             <div class="toolbar">
                 <h1>Channels</h1>
                 <a href="#dashboard" class="button back leftButton">Dashboard</a>
             </div>
             <ul>
                 <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
-                <li><a href="#channel-<%= $name->[0] %>" class="cube"><%= $name->[1] %></a></li>
+                <li><a href="#channel-<%= $name->[0] %>" class=""><%= $name->[1] %></a></li>
                 <% } %>
             </ul>
         </div>
 
         <% for my $name (map { my $o = $_; my $e = lc($_); my ($network, $channel) = split(" ", $e); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o, $network, $channel]; } @$channels) { %>
-        <div id="channel-<%= $name->[0] %>" class="channel cube">
+        <div id="channel-<%= $name->[0] %>" class="channel ">
             <div class="toolbar">
                 <h1><%= $name->[3] %></h1>
                 <a href="#irc-channels" class="button back leftButton">Channels</a>
