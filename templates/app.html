@@ -1,3 +1,4 @@
+% my $application = $_[0]->{application};
 % my $channels = $_[0]->{channels};
 % my $nick = $_[0]->{nick};
 <!doctype html>
@@ -7,6 +8,7 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
         <script type="text/javascript" src="/static/jqtouch.min.js"></script>
         <script type="text/javascript" src="/static/jquery.oembed.js"></script>
+        <script type="text/javascript" src="/static/jquery.ev.js"></script>
         <script type="text/javascript" src="/static/social.js"></script>
 
         <title>Social</title>
@@ -23,8 +25,15 @@
                 <h1>Dashboard</h1>
             </div>
             <ul>
+                <% if ($application->has_twitter_client) { %>
                 <li><a href="#twitter-statuses-friends" class="">Twitter</a></li>
+                <% } %>
+                <% if ($application->has_plurk_client) { %>
+                <li><a href="#plurk" class="">Plurk</a></li>
+                <% } %>
+                <% if ($application->has_irc_clients) { %>
                 <li><a href="#irc-channels" class="">IRC</a></li>
+                <% } %>
             </ul>
         </div>
 
@@ -51,6 +60,14 @@
             <div class="toolbar">
                 <h1>@<%= $nick %></h1>
                 <a href="#twitter-statuses-friends" class="button back leftButton">Twitter</a>
+            </div>
+            <div class="messages"></div>
+        </div>
+
+        <div id="plurk">
+            <div class="toolbar">
+                <h1>Plurk</h1>
+                <a href="#dashboard" class="button back leftButton">Dashboard</a>
             </div>
             <div class="messages"></div>
         </div>

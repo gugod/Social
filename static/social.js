@@ -69,7 +69,29 @@ Social.Twitter = {
 
         $line
             .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-            .append( $('<span/>').addClass('sender').text(name + ": ") )
+            .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" rel=\"external\" href=\"http://twitter.com/" + name +"\">" + name + "</a>: ") )
+            .append($message);
+
+        return $line;
+    }
+};
+
+Social.Plurk = {
+    build_line: function(e) {
+        var type   = "text";
+        var name   = e.user ? e.user.nick_name : e.owner_id;
+
+        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
+
+        var $message = $('<span/>').attr({"class": "message", "type": e.type });
+
+        $message.html("<span>" + e.qualifier + "<span>" + e.html);
+
+        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
+
+        $line
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
+            .append( $('<span/>').addClass('sender').html("<a href=\"http://www.plurk.com/" + name +"\">" + name + "</a>: ") )
             .append($message);
 
         return $line;
@@ -85,6 +107,11 @@ Social.Handlers = {
     "twitter_statuses_mentions": function(e) {
         var $line = Social.Twitter.build_status_line(e);
         $("#twitter-statuses-mentions .messages").prepend( $line );
+    },
+
+    "plurk": function(e) {
+        var $line = Social.Plurk.build_line(e);
+        $("#plurk .messages").prepend( $line );
     },
 
     "join": function(e) {
@@ -156,14 +183,12 @@ $(function() {
     });
 
     if (navigator.userAgent.indexOf("iPhone") != -1) {
-        if (navigator.standalone) {
-            $("body").addClass("full-screen");
-        }
-        $.getScript("/static/jquery.ev.js", Social.launch_polling);
+        Social.launch_polling();
     }
     else {
-        $.getScript("/static/DUI.js", function() {
-            $.getScript("/static/Stream.js", Social.launch_polling)
-        });
+        Social.launch_polling();
+        // $.getScript("/static/DUI.js", function() {
+        //     $.getScript("/static/Stream.js", Social.launch_polling)
+        // });
     }
 });

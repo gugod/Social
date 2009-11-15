@@ -6,8 +6,9 @@ sub get {
     my ($self) = @_;
 
     $self->render('app.html', {
-        channels => $self->application->irc_channels,
-        nick     => $self->application->irc_nick,
+        application => $self->application,
+        channels    => $self->application->irc_channels,
+        nick        => $self->application->irc_nick,
     });
 }
 
