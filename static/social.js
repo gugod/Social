@@ -110,7 +110,6 @@ Social.Handlers = {
     },
 
     "plurk": function(e) {
-        console.log(e);
         var $line = Social.Plurk.build_line(e);
         $("#plurk .messages").prepend( $line );
     },
