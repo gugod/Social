@@ -47,4 +47,11 @@ sub _build_plurky {
     return $p;
 }
 
+sub add_plurk {
+    my $self = shift;
+    my $content = shift;
+    $self->plurky->add_plurk($content);
+}
+
+
 1;
