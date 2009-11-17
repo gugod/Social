@@ -1,6 +1,16 @@
+
 twitter:
   username: my_twitter_account
   password: s0m3th1n6
+
+
+## Plurk config. All three top-level keys are optional.
+## Uncomment the following block and put the correct values there to enable plurk support.
+
+#
+# plurk:
+#   username: my_plurk_account
+#   password: s0m3th1n6
 
 irc:
   nick: chat_demo
