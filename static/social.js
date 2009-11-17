@@ -5,12 +5,14 @@ var jQT = new $.jQTouch({
     cacheGetRequests: false
 });
 
+var time_text_memoized = {};
 function time_text(x) {
+    if (time_text_memoized[x]) return time_text_memoized[x];
     var t = new Date( Date.parse(x) );
     var h = t.getHours();
     var m = t.getMinutes();
-    var time_text = h < 10 ? "0" + h : h + ":" + m < 10 ? "0" + m : m;
-    return time_text;
+    time_text_memoized[x] = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
+    return time_text_memoized[x];
 }
 
 var Social = {};
