@@ -1,6 +1,6 @@
 package Social::Application;
 use 5.010;
-use Moose;
+use Any::Moose;
 
 extends "Tatsumaki::Application";
 
@@ -132,6 +132,4 @@ sub irc_channels {
 }
 
 
-__PACKAGE__->meta->make_immutable;
-no Moose;
 1;

@@ -1,5 +1,5 @@
 package Social::TwitterClient;
-use Moose;
+use Any::Moose;
 use AnyEvent::Twitter;
 use Social::Helpers;
 
@@ -62,6 +62,5 @@ sub update_status {
     $self->twitty->update_status($status, sub {});
 }
 
-__PACKAGE__->meta->make_immutable;
-no Moose;
 1;
+
