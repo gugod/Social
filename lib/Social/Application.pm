@@ -79,7 +79,7 @@ sub _build_irc_clients {
     my $self = shift;
 
     my $CONFIG = $self->config->{irc};
-    return undef unless $CONFIG;
+    return {} unless $CONFIG;
 
     my %IRC_CLIENT;
     while (my ($network, $config) = each %{$CONFIG->{networks}}) {
@@ -120,7 +120,7 @@ sub irc_send {
 
 sub irc_channels {
     my $self = shift;
-    my @channels;
+    my @channels = ();
     my $clients = $self->irc_clients;
 
     for my $network (keys %$clients) {
