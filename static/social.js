@@ -155,7 +155,7 @@ $(function() {
             var page_id = $this.parents("body > *").attr("id");
 
             if ($this.data("showing") == "all") {
-                $("#", page_id + "-style").remove();
+                $("#" + page_id + "-style").remove();
                 x = x.replace("only recent", "all");
                 $this.data("showing", "recent").text(x);
             }
