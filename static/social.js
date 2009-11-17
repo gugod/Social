@@ -146,19 +146,26 @@ Social.Handlers = {
 };
 
 $(function() {
-    $("#twitter-button-toggle-all-statuses")
+    $(".button.toggle-all-messages")
         .bind("click", function() {
             var $this = $(this);
+            var x = $this.text();
+
+            var page_id = $this.parents("body > *").attr("id");
+
             if ($this.data("showing") == "all") {
-                $("#twitter-show-all-statuses-style").remove();
-                $this.data("showing", "recent").text("Show all tweets");;
+                $("#", page_id + "-style").remove();
+                x = x.replace("only recent", "all");
+                $this.data("showing", "recent").text(x);
             }
             else {
                 $("<style/>")
-                    .attr("id", "twitter-show-all-statuses-style")
-                    .text("#twitter-statuses-friends .messages .line:nth-child(50) ~ * { display: block; }")
+                    .attr("id", page_id + "-style")
+                    .text("#" + page_id + " .messages .line:nth-child(50) ~ * { display: block; }")
                     .appendTo("head");
-                $this.data("showing", "all").text("Show ony recent tweets");
+
+                x = x.replace("all", "only recent");
+                $this.data("showing", "all").text(x);
             }
             return false;
         });

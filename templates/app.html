@@ -52,7 +52,7 @@
             </form>
             <div class="messages"></div>
             <div class="toolbar">
-                <a href="#" class="button" id="twitter-button-toggle-all-statuses">Show all tweets</a>
+                <a href="#" class="button toggle-all-messages">Show all tweets</a>
             </div>
         </div>
 
@@ -69,7 +69,16 @@
                 <h1>Plurk</h1>
                 <a href="#dashboard" class="button back leftButton">Dashboard</a>
             </div>
+            <form action="/plurk" method="post">
+                <div>
+                    <input type="text"   name="text" />
+                    <input type="image"  class="submit" src="/static/09-chat2.png" />
+                </div>
+            </form>
             <div class="messages"></div>
+            <div class="toolbar">
+                <a href="#" class="button toggle-all-messages">Show all plurks</a>
+            </div>
         </div>
 
         <div id="irc-channels" class="">
