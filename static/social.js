@@ -1,16 +1,21 @@
 var jQT = new $.jQTouch({
     formSelector: "form#not-used",
+    // "useFastTouch: true" breaks form submission. Hitting "Go" on iPhone keyborad does nothing at all.
     useFastTouch: false,
     cacheGetRequests: false
 });
 
-var Social = {};
-Social.Irc = {};
+function time_text(x) {
+    var t = new Date( Date.parse(x) );
+    var h = t.getHours();
+    var m = t.getMinutes();
+    var time_text = h < 10 ? "0" + h : h + ":" + m < 10 ? "0" + m : m;
+    return time_text;
+}
 
-function padzero(x) {
-    if (x < 10) return "0" + x;
-    return x;
-};
+var Social = {};
+
+Social.Irc = {};
 
 Social.launch_polling = function() {
     if (typeof DUI == "undefined") {
@@ -25,12 +30,6 @@ Social.launch_polling = function() {
         });
         s.load('/mpoll?session=' + Date.now());
     }
-}
-
-function time_text(x) {
-    var t = new Date( Date.parse(x) );
-    var time_text = padzero(t.getHours()) + ":" + padzero(t.getMinutes());
-    return time_text;
 }
 
 var $channel_div_for = function(channel) {
