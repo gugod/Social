@@ -17,6 +17,7 @@ installed:
 - Plack::Request
 - Tatsumaki
 - AnyEvent::Twitter
+- AnyEvent::Plurk
 
 Running It
 ----------
