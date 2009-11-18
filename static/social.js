@@ -40,20 +40,48 @@ var $channel_div_for = function(channel) {
     return $("#" + channel_el_id);
 }
 
-Social.Irc.append_event_line = function(e, message_body) {
-    var name   = e.name || e.ident || 'Anonymous';
+Social.Irc = {
+    build_line: function(e) {
+        var name   = e.name;
 
-    var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type});
+        var lineClassName = "text";
+        var messageClassName = "privmsg";
 
-    var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(message_body);
+        if (e.type == "irc_ctcp_action") {
+            messageClassName = "notice"
+        }
 
-    $line
-        .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-        .append($message);
+        var $line = $('<div/>').attr({'class': 'line ' + lineClassName, 'nick': name, 'type': messageClassName});
 
-    $channel_div_for(e.channel).find(".messages").prepend( $line );
-    return $line;
-};
+        var $message = $('<span/>').attr({"class": "message", "type": messageClassName });
+        if (e.text) $message.text(e.text);
+        if (e.html) $message.html(e.html);
+
+        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
+
+        $line
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
+            .append( $('<span/>').addClass('sender').text(name + ": ") )
+            .append($message);
+
+        return $line;
+    },
+
+    append_event_line: function(e, message_body) {
+        var name   = e.name || e.ident || 'Anonymous';
+
+        var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type});
+
+        var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(message_body);
+
+        $line
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
+            .append($message);
+
+        $channel_div_for(e.channel).find(".messages").prepend( $line );
+        return $line;
+    }
+}
 
 Social.Twitter = {
     build_status_line: function(e) {
@@ -126,22 +154,12 @@ Social.Handlers = {
     },
 
     "privmsg": function(e) {
-        var type   = "text";
-        var name   = e.name   || e.ident || 'Anonymous';
+        var $line = Social.Irc.build_line(e);
+        $channel_div_for(e.channel).find(".messages").prepend( $line );
+    },
 
-        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
-
-        var $message = $('<span/>').attr({"class": "message", "type": e.type });
-        if (e.text) $message.text(e.text);
-        if (e.html) $message.html(e.html);
-
-        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
-
-        $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-            .append( $('<span/>').addClass('sender').text(name + ": ") )
-            .append($message);
-
+    "irc_ctcp_action": function(e) {
+        var $line = Social.Irc.build_line(e);
         $channel_div_for(e.channel).find(".messages").prepend( $line );
     }
 };

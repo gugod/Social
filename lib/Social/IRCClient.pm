@@ -1,7 +1,7 @@
 package Social::IRCClient;
 use strict;
 use warnings;
-use base 'AnyEvent::IRC::Client';
+use parents 'AnyEvent::IRC::Client';
 use Tatsumaki::MessageQueue;
 use Social::Helpers;
 
@@ -20,12 +20,23 @@ sub new {
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
 
                 Social::Helpers->mq_publish({
-                    type    => "privmsg",
+                    type    => lc($packet->{command}),
                     channel => $self->heap->{network} . " " . $channel,
                     name    => $who,
                     html    => Social::Helpers->format_message( Encode::decode_utf8($msg) )
                 });
             }
+        },
+
+        ctcp_action => sub {
+            my ($con, $who, $channel, $text, undef) = @_;
+
+            Social::Helpers->mq_publish({
+                type    => "irc_ctcp_action",
+                channel => $self->heap->{network} . " " . $channel,
+                name    => $who,
+                html    => Social::Helpers->format_message( Encode::decode_utf8($text) )
+            });
         },
 
         registered => sub {
@@ -66,9 +77,8 @@ sub new {
 
         ## A verf generic handler
         # read => sub {
-        #     my ($con, $msg) = @_;
-        #     my $cmd = lc($msg->{command});
-        #     print Dump($msg);
+        # my ($con, $msg) = @_;
+        # # print Dump($msg);
         # }
     );
 

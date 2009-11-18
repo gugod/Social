@@ -17,9 +17,8 @@ sub post {
     Social::Helpers->mq_publish({
         type    => "privmsg",
         html    => $html,
-        ident   => $v->{ident},
         channel => $v->{channel},
-        name    => $v->{name},
+        name    => $v->{ident},
         address => $self->request->address,
         time    => scalar localtime(time),
     });
