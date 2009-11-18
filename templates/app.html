@@ -101,7 +101,7 @@
             </div>
             <form action="/irc" method="post">
                 <div>
-                    <input type="hidden" name="ident" value="<%= $nick %>" />
+                    <input type="hidden" name="name"    value="<%= $nick %>" />
                     <input type="hidden" name="channel" value="<%= $name->[1] %>" />
                     <input type="text"   name="text" />
                     <input type="image"  class="submit" src="/static/09-chat2.png" />

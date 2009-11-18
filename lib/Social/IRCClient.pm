@@ -27,11 +27,14 @@ sub new {
             }
         },
 
-        ctcp_action => sub {
-            my ($con, $who, $channel, $text, undef) = @_;
+        ctcp => sub {
+            my $self = shift;
+            my ($who, $channel, $tag, $text, undef) = @_;
+
+            $tag = lc($tag);
 
             Social::Helpers->mq_publish({
-                type    => "irc_ctcp_action",
+                type    => "irc_ctcp_${tag}",
                 channel => $self->heap->{network} . " " . $channel,
                 name    => $who,
                 html    => Social::Helpers->format_message( Encode::decode_utf8($text) )
@@ -83,11 +86,11 @@ sub new {
             });
         },
 
-        ## A verf generic handler
-        # read => sub {
-        # my ($con, $msg) = @_;
-        # # print Dump($msg);
-        # }
+        read => sub {
+            use YAML;
+            my ($con, $msg) = @_;
+            # print Dump($msg);
+        }
     );
 
     return $self;

@@ -4,21 +4,33 @@ use warnings;
 
 use parent "Tatsumaki::Handler";
 
+use AnyEvent::IRC::Util qw(encode_ctcp);
+use Encode qw(encode_utf8);
 use Social::Helpers;
-use Encode ();
 
 sub post {
     my ($self) = @_;
+    my %params = %{$self->request->params};
 
-    my $v = $self->request->params;
-    $self->application->irc_send('privmsg', $v->{channel}, Encode::encode_utf8($v->{text}));
+    my $text = $params{text};
+    my $irc_event = "privmsg";
 
-    my $html = Social::Helpers->format_message($v->{text});
+    if ($text =~ s{^/me }{}) {
+        my $ctcp_data = encode_ctcp(["ACTION", Encode::encode_utf8($text)]);
+        $self->application->irc_send($irc_event, $params{channel}, $ctcp_data);
+
+        $irc_event = "ctcp_action";
+    }
+    else {
+        $self->application->irc_send($irc_event, $params{channel}, encode_utf8($text));
+    }
+
+    my $html = Social::Helpers->format_message($text);
     Social::Helpers->mq_publish({
-        type    => "irc_privmsg",
+        type    => "irc_${irc_event}",
         html    => $html,
-        channel => $v->{channel},
-        name    => $v->{ident},
+        channel => $params{channel},
+        name    => $params{name},
         address => $self->request->address,
         time    => scalar localtime(time),
     });
