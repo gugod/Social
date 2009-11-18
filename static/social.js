@@ -68,7 +68,7 @@ Social.Irc = {
     },
 
     append_event_line: function(e, message_body) {
-        var name   = e.name || e.ident || 'Anonymous';
+        var name   = e.name;
 
         var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type});
 
@@ -143,17 +143,22 @@ Social.Handlers = {
         $("#plurk .messages").prepend( $line );
     },
 
-    "join": function(e) {
-        var name   = e.name || e.ident || 'Anonymous';
+    "irc_join": function(e) {
+        var name   = e.name;
         Social.Irc.append_event_line(e, name + " has joined " + e.channel);
     },
 
-    "part": function(e) {
-        var name   = e.name || e.ident || 'Anonymous';
+    "irc_part": function(e) {
+        var name   = e.name;
         Social.Irc.append_event_line(e, name + " has parted " + e.channel);
     },
 
-    "privmsg": function(e) {
+    "irc_quit": function(e) {
+        var name   = e.name;
+        Social.Irc.append_event_line(e, name + " has quit " + e.channel);
+    },
+
+    "irc_privmsg": function(e) {
         var $line = Social.Irc.build_line(e);
         $channel_div_for(e.channel).find(".messages").prepend( $line );
     },

@@ -1,7 +1,6 @@
 package Social::IRCClient;
-use strict;
-use warnings;
-use parents 'AnyEvent::IRC::Client';
+use common::sense;
+use parent 'AnyEvent::IRC::Client';
 use Tatsumaki::MessageQueue;
 use Social::Helpers;
 
@@ -20,7 +19,7 @@ sub new {
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
 
                 Social::Helpers->mq_publish({
-                    type    => lc($packet->{command}),
+                    type    => "irc_" . lc($packet->{command}),
                     channel => $self->heap->{network} . " " . $channel,
                     name    => $who,
                     html    => Social::Helpers->format_message( Encode::decode_utf8($msg) )
@@ -56,22 +55,31 @@ sub new {
         },
 
         join => sub {
-            my ($con, $nick, $channel, $is_myself) = @_;
+            my ($self, $nick, $channel, $is_myself) = @_;
             Social::Helpers->mq_publish({
-                type      => 'join',
-                channel => $self->heap->{network} . " " . $channel,
+                type      => 'irc_join',
+                channel   => $self->heap->{network} . " " . $channel,
                 name      => $nick,
                 is_myself => $is_myself
             });
         },
 
         part => sub {
-            my ($con, $nick, $channel, $is_myself) = @_;
+            my ($self, $nick, $channel, $is_myself) = @_;
             Social::Helpers->mq_publish({
-                type      => 'part',
-                channel => $self->heap->{network} . " " . $channel,
+                type      => 'irc_part',
+                channel   => $self->heap->{network} . " " . $channel,
                 name      => $nick,
                 is_myself => $is_myself
+            });
+        },
+
+        quit => sub {
+            my ($self, $nick, $channel) = @_;
+            Social::Helpers->mq_publish({
+                type      => 'irc_quit',
+                channel   => $self->heap->{network} . " " . $channel,
+                name      => $nick,
             });
         },
 

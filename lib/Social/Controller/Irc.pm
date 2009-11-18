@@ -15,7 +15,7 @@ sub post {
 
     my $html = Social::Helpers->format_message($v->{text});
     Social::Helpers->mq_publish({
-        type    => "privmsg",
+        type    => "irc_privmsg",
         html    => $html,
         channel => $v->{channel},
         name    => $v->{ident},
