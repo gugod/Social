@@ -164,7 +164,6 @@ Social.Handlers = {
 
 $(function() {
     (function() {
-        // Minimum jqtouch.js replacement
         location.hash = "";
         $(window).load(function() { setTimeout(function() { window.scrollTo(0, 1); }, 500); });
 
@@ -177,6 +176,9 @@ $(function() {
         $("a").bind("click", function() {
             var href = $(this).attr("href");
             if ( href.match(/^#\S+$/) ) {
+                if ( !$(this).is(".button") )
+                    $(this).addClass("active");
+
                 $(':focus').blur();
                 window.scrollTo(0, 0);
 
@@ -184,14 +186,16 @@ $(function() {
                 var $to   = $(href);
 
                 var reverse = $(this).is(".toolbar > .back") ? " reverse" : "";
+                var effect  = " " + ($(this).attr("effect") || "slide");
 
-                $to.addClass("current in slide" + reverse ).one("webkitAnimationEnd", function() {
-                    $to.removeClass("in reverse slide");
+                $("body").one("webkitAnimationEnd", function() {
+                    $to.removeClass("in" + effect + reverse);
+                    $from.removeClass("out current" + effect + reverse);
+                    $(".active").removeClass("active");
                 });
 
-                $from.addClass("out slide" + reverse).one("webkitAnimationEnd", function() {
-                    $from.removeClass("out reverse slide current");
-                });
+                $to.addClass("current in" + effect + reverse);
+                $from.addClass("out" + effect + reverse);
 
                 return false;
             }
