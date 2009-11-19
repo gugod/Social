@@ -192,7 +192,8 @@ $(function() {
                     $(".active").removeClass("active");
                     $to.removeClass("in" + effect + reverse);
                     $from.removeClass("out current" + effect + reverse);
-                }).addClass("current in" + effect + reverse);
+                    $to.addClass("current");
+                }).addClass("in" + effect + reverse);
 
                 $from.addClass("out" + effect + reverse);
 
