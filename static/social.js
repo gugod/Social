@@ -166,11 +166,12 @@ $(function() {
     (function() {
         // Minimum jqtouch.js replacement
         location.hash = "";
-        $(window).load(function() {
-            setTimeout(function() { window.scrollTo(0, 1); }, 500);
-        });
+        $(window).load(function() { setTimeout(function() { window.scrollTo(0, 1); }, 500); });
 
-        $("body").addClass("profile");
+        $("body").bind("orientationchange", function() {
+            orientation = window.innerWidth < window.innerHeight ? 'profile' : 'landscape';
+            $body.removeClass('profile landscape').addClass(orientation);
+        });
         $("body > *:first-child").addClass("current");
 
         $("a").bind("click", function() {
