@@ -3,8 +3,6 @@ use Any::Moose;
 use AnyEvent::Twitter;
 use Social::Helpers;
 
-use encoding 'utf8';
-
 has config => (
     is => "rw",
     isa => "HashRef"
@@ -63,4 +61,3 @@ sub update_status {
 }
 
 1;
-
