@@ -170,7 +170,7 @@ $(function() {
 
         $("body").bind("orientationchange", function() {
             orientation = window.innerWidth < window.innerHeight ? 'profile' : 'landscape';
-            $body.removeClass('profile landscape').addClass(orientation);
+            $(body).removeClass('profile landscape').addClass(orientation);
         });
         $("body > *:first-child").addClass("current");
 
