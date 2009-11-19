@@ -11,8 +11,7 @@ form {
 
 input[name=text] {
     width: 75%;
-    font-size: 1.2em;
-    height: 1.5em;
+    height: 2em;
     margin: 0 0.5em;
     padding: 0 0.5em;
 }
