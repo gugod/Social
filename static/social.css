@@ -1,13 +1,4 @@
-body { margin: 0; padding: 0 }
-
-body > * {
-    overflow: hidden;
-    margin: 0;
-}
-
-body > *:first-child {
-    display: block;
-}
+body > * { overflow: hidden; }
 
 form {
     vertical-align: center;
