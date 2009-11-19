@@ -3,17 +3,20 @@ body > * { overflow: hidden; }
 form {
     vertical-align: center;
     height: 3em;
-    line-height: 3em;
     background: #eee;
-    padding: 0;
-    margin: 0;
 }
 
 input[name=text] {
-    width: 75%;
-    height: 2em;
-    margin: 0 0.5em;
-    padding: 0 0.5em;
+    font-size: 100%;
+    min-width: 250px;
+    margin: 5px;
+    padding: 5px;
+}
+
+input.submit {
+    display: block;
+    float: right;
+    margin: 10px 10px 10px 0;
 }
 
 .messages img {
