@@ -165,10 +165,9 @@ Social.Handlers = {
 $(function() {
     (function() {
         // Minimum jqtouch.js replacement
+        location.hash = "";
         $(window).load(function() {
-            setTimeout(function() {
-                window.scorllTo(0,1);
-            }, 100);
+            setTimeout(function() { window.scrollTo(0, 1); }, 500);
         });
 
         $("body").addClass("profile");
@@ -177,9 +176,22 @@ $(function() {
         $("a").bind("click", function() {
             var href = $(this).attr("href");
             if ( href.match(/^#\S+$/) ) {
-                $("body > .current").removeClass("current");
-                $(href).addClass("current");
-                window.scorllTo(0,1);
+                $(':focus').blur();
+                window.scrollTo(0, 0);
+
+                var $from = $("body > .current");
+                var $to   = $(href);
+
+                var reverse = $(this).is(".toolbar > .back") ? " reverse" : "";
+
+                $to.addClass("current in slide" + reverse ).one("webkitAnimationEnd", function() {
+                    $to.removeClass("in reverse slide");
+                });
+
+                $from.addClass("out slide" + reverse).one("webkitAnimationEnd", function() {
+                    $from.removeClass("out reverse slide current");
+                });
+
                 return false;
             }
         });
