@@ -165,7 +165,7 @@ Social.Handlers = {
 $(function() {
     (function() {
         location.hash = "";
-        $(window).load(function() { setTimeout(function() { window.scrollTo(0, 1); }, 500); });
+        $(window).load(function() { setTimeout(function() { window.scrollTo(0, 1); }, 10); });
 
         $("body").bind("orientationchange", function() {
             orientation = window.innerWidth < window.innerHeight ? 'profile' : 'landscape';
@@ -188,13 +188,12 @@ $(function() {
                 var reverse = $(this).is(".toolbar > .back") ? " reverse" : "";
                 var effect  = " " + ($(this).attr("effect") || "slide");
 
-                $("body").one("webkitAnimationEnd", function() {
+                $to.one("webkitAnimationEnd", function() {
+                    $(".active").removeClass("active");
                     $to.removeClass("in" + effect + reverse);
                     $from.removeClass("out current" + effect + reverse);
-                    $(".active").removeClass("active");
-                });
+                }).addClass("current in" + effect + reverse);
 
-                $to.addClass("current in" + effect + reverse);
                 $from.addClass("out" + effect + reverse);
 
                 return false;
