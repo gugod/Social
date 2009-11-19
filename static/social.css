@@ -26,3 +26,22 @@ input[name=text] {
 .messages .line:nth-child(50) ~ * {
     display: none;
 }
+
+#dashboard .messages .line {
+    width: 95%;
+    margin: 2px auto;
+    padding-right: 36px;
+    padding-bottom: 16px;
+}
+
+#dashboard .messages .line[source=twitter] {
+    background: #fff url(/static/twitter_24.png) 2px right no-repeat;
+}
+
+#dashboard .messages .line[source=plurk] {
+    background: #fff url(/static/plurk_24.png) 2px right no-repeat;
+}
+
+#dashboard .messages .line[source=irc] {
+    background: #fff url(/static/irc.png) 2px right no-repeat;
+}

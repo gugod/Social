@@ -44,7 +44,7 @@ Social.Irc = {
             messageClassName = "notice"
         }
 
-        var $line = $('<div/>').attr({'class': 'line ' + lineClassName, 'nick': name, 'type': messageClassName});
+        var $line = $('<div/>').attr({'class': 'line ' + lineClassName, 'nick': name, 'type': messageClassName, "source": "irc"});
 
         var $message = $('<span/>').attr({"class": "message", "type": messageClassName });
         if (e.text) $message.text(e.text);
@@ -63,7 +63,7 @@ Social.Irc = {
     append_event_line: function(e, message_body) {
         var name   = e.name;
 
-        var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type});
+        var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type, "source": "irc"});
 
         var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(message_body);
 
@@ -81,7 +81,7 @@ Social.Twitter = {
         var type   = "text";
         var name   = e.user.screen_name;
 
-        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
+        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type, "source": "twitter"});
 
         var $message = $('<span/>').attr({"class": "message", "type": e.type });
         if (e.text) $message.text(e.text);
@@ -103,7 +103,7 @@ Social.Plurk = {
         var type   = "text";
         var name   = e.owner ? e.owner.nick_name : e.owner_id;
 
-        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type});
+        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type, "source": "plurk"});
 
         var $message = $('<span/>').attr({"class": "message", "type": e.type });
 
@@ -120,20 +120,34 @@ Social.Plurk = {
     }
 };
 
+Social.Dashboard = {
+    prepend_line: function($line) {
+        if ($("#dashboard .messages .line").size() == 7) {
+            $("#dashboard .messages .line:last-child").remove();
+        }
+        $("#dashboard .messages").prepend( $line );
+    }
+};
 
 Social.Handlers = {
     "twitter_statuses_friends": function(e) {
         var $line = Social.Twitter.build_status_line(e);
         $("#twitter-statuses-friends .messages").prepend( $line );
+
+        Social.Dashboard.prepend_line($line.clone());
     },
     "twitter_statuses_mentions": function(e) {
         var $line = Social.Twitter.build_status_line(e);
         $("#twitter-statuses-mentions .messages").prepend( $line );
+
+        Social.Dashboard.prepend_line($line.clone());
     },
 
     "plurk": function(e) {
         var $line = Social.Plurk.build_line(e);
         $("#plurk .messages").prepend( $line );
+
+        Social.Dashboard.prepend_line($line.clone());
     },
 
     "irc_join": function(e) {
@@ -154,6 +168,8 @@ Social.Handlers = {
     "irc_privmsg": function(e) {
         var $line = Social.Irc.build_line(e);
         $channel_div_for(e.channel).find(".messages").prepend( $line );
+
+        Social.Dashboard.prepend_line($line.clone());
     },
 
     "irc_ctcp_action": function(e) {
@@ -171,9 +187,9 @@ $(function() {
             orientation = window.innerWidth < window.innerHeight ? 'profile' : 'landscape';
             $(body).removeClass('profile landscape').addClass(orientation);
         });
-        $("body > *:first-child").addClass("current");
+        $("body > *:first").addClass("current");
 
-        $("a").bind("click", function() {
+        $("a").live("click", function() {
             var href = $(this).attr("href");
             if ( href.match(/^#\S+$/) ) {
                 if ( !$(this).is(".button") )
@@ -190,15 +206,16 @@ $(function() {
 
                 $to.one("webkitAnimationEnd", function() {
                     $(".active").removeClass("active");
-                    $to.removeClass("in" + effect + reverse);
+
                     $from.removeClass("out current" + effect + reverse);
-                    $to.addClass("current");
-                }).addClass("in" + effect + reverse);
+                    $to.removeClass("in" + effect + reverse);
+                }).addClass("current in" + effect + reverse);
 
                 $from.addClass("out" + effect + reverse);
 
                 return false;
             }
+            return true;
         });
     })();
 

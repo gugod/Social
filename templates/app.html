@@ -22,7 +22,7 @@
         </style>
     </head>
     <body>
-        <div id="dashboard" class="">
+        <div id="dashboard">
             <div class="toolbar">
                 <h1>Dashboard</h1>
             </div>
@@ -34,12 +34,13 @@
                 <li><a href="#plurk" class="">Plurk</a></li>
                 <% } %>
                 <% if ($application->has_irc_clients) { %>
-                <li><a href="#irc-channels" class="">IRC</a></li>
+                <li><a href="#irc-channels">IRC</a></li>
                 <% } %>
             </ul>
+            <div class="messages"></div>
         </div>
 
-        <div id="twitter-statuses-friends" class="">
+        <div id="twitter-statuses-friends">
             <div class="toolbar">
                 <h1>Twitter</h1>
                 <a href="#dashboard" class="button back">Dashboard</a>
@@ -58,7 +59,7 @@
             </div>
         </div>
 
-        <div id="twitter-statuses-mentions" class="">
+        <div id="twitter-statuses-mentions">
             <div class="toolbar">
                 <h1>@<%= $nick %></h1>
                 <a href="#dashboard" class="button back">Dashboard</a>
@@ -84,14 +85,14 @@
             </div>
         </div>
 
-        <div id="irc-channels" class="">
+        <div id="irc-channels">
             <div class="toolbar">
                 <h1>Channels</h1>
                 <a href="#dashboard" class="button back leftButton">Dashboard</a>
             </div>
             <ul>
                 <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
-                <li><a href="#channel-<%= $name->[0] %>" class=""><%= $name->[1] %></a></li>
+                <li><a href="#channel-<%= $name->[0] %>"><%= $name->[1] %></a></li>
                 <% } %>
             </ul>
         </div>
