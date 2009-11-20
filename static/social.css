@@ -72,9 +72,10 @@ input.submit {
 
 #plurk .line .response_count {
     float: right;
-    margin: 0 24px 1em 0;
-    padding: 0 5px;
-    background: #000;
+    margin: 0 0 0 10px;
+    padding: 2px ;
     color: #fff;
-    font-size: 100%;
+    background: #000;
+    font-weight: bold;
+    font-size: 70%;
 }
