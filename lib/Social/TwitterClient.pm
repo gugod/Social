@@ -19,7 +19,6 @@ sub app {
     my ($class, @args) = @_;
     my $self = $class->new(@args);
     $self->twitty->start;
-    $self->twitty->receive_statuses_friends;
     return $self;
 }
 
@@ -49,8 +48,8 @@ sub _build_twitty {
         statuses_mentions => $build_publisher->("twitter_statuses_mentions"),
     );
 
-    $twitty->receive_statuses_friends;
     $twitty->receive_statuses_mentions;
+    $twitty->receive_statuses_friends;
 
     return $twitty;
 }
