@@ -1,0 +1,26 @@
+#!/usr/bin/env perl
+use common::sense;
+use JavaScript::Minifier::XS ();
+use CSS::Minifier ();
+use Cwd;
+use File::Basename;
+use IO::All;
+
+*js_minify  = *{JavaScript::Minifier::XS::minify};
+*css_minify = *{CSS::Minifier::minify};
+
+chdir( dirname(__FILE__) . "/../static" );
+
+my @js = (
+    "jquery-1.3.2.min.js",
+    "jquery.oembed.js",
+    "jquery.ev.js",
+    "social.js"
+);
+
+my $minified = js_minify(join ";\n", map { io($_)->all } @js);
+
+open JS, ">", "all.js";
+print JS $minified ."\n";
+close JS;
+say "all.js generated";
