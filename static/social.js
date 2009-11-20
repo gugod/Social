@@ -1,7 +1,7 @@
 var time_text_memoized = {};
 function time_text(x) {
     if (time_text_memoized[x]) return time_text_memoized[x];
-    var t = new Date( Date.parse(x) );
+    var t = (typeof x == "string") ? new Date( Date.parse(x) ) : x;
     var h = t.getHours();
     var m = t.getMinutes();
     time_text_memoized[x] = (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m);
@@ -78,10 +78,18 @@ Social.Irc = {
 
 Social.Twitter = {
     build_status_line: function(e) {
+        var created_at = new Date( Date.parse(e.created_at) );
+
         var type   = "text";
         var name   = e.user.screen_name;
 
-        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type, "source": "twitter"});
+        var $line = $('<div/>').attr({
+            'class': 'line ' + type,
+            'nick': name,
+            'type': type,
+            "source": "twitter",
+            "id": "twitter-status-" + e.id
+        });
 
         var $message = $('<span/>').attr({"class": "message", "type": e.type });
         if (e.text) $message.text(e.text);
@@ -90,7 +98,7 @@ Social.Twitter = {
         $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
 
         $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
+            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(created_at)) )
             .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" rel=\"external\" href=\"http://twitter.com/" + name +"\">" + name + "</a>: ") )
             .append($message);
 
