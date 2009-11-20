@@ -119,6 +119,7 @@ Social.Plurk = {
         $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
 
         $line
+            .append( $('<span/>').attr({"class": "response_count"}).text( e.response_count ) )
             .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
             .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" href=\"http://www.plurk.com/" + name +"\">" + name + "</a>: ") )
             .append($message);
