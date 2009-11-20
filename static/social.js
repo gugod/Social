@@ -27,13 +27,12 @@ Social.launch_polling = function() {
     }
 }
 
-var $channel_div_for = function(channel) {
-    var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
-
-    return $("#" + channel_el_id);
-}
-
 Social.Irc = {
+    channel_div_for: function(channel) {
+        var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
+        return $("#" + channel_el_id);
+    },
+
     build_line: function(e) {
         var name   = e.name;
 
@@ -71,7 +70,7 @@ Social.Irc = {
             .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
             .append($message);
 
-        $channel_div_for(e.channel).find(".messages").prepend( $line );
+        Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
         return $line;
     }
 }
@@ -175,14 +174,14 @@ Social.Handlers = {
 
     "irc_privmsg": function(e) {
         var $line = Social.Irc.build_line(e);
-        $channel_div_for(e.channel).find(".messages").prepend( $line );
+        Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
 
         Social.Dashboard.prepend_line($line.clone());
     },
 
     "irc_ctcp_action": function(e) {
         var $line = Social.Irc.build_line(e);
-        $channel_div_for(e.channel).find(".messages").prepend( $line );
+        Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
     }
 };
 
