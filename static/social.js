@@ -262,7 +262,7 @@ $(function() {
         return false;
     });
 
-    if (navigator.userAgent.indexOf("iPhone") != -1) {
+    if (navigator.userAgent.indexOf("Mobile Safari") != -1) {
         Social.launch_polling();
     }
     else {
