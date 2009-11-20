@@ -181,13 +181,15 @@ Social.Handlers = {
 $(function() {
     (function() {
         location.hash = "";
+        $("body > *").css("display", "none");
+        $("body > *:first").addClass("current");
+
         $(window).load(function() { setTimeout(function() { window.scrollTo(0, 1); }, 10); });
 
         $("body").bind("orientationchange", function() {
             orientation = window.innerWidth < window.innerHeight ? 'profile' : 'landscape';
             $(body).removeClass('profile landscape').addClass(orientation);
         });
-        $("body > *:first").addClass("current");
 
         $("a").live("click", function() {
             var href = $(this).attr("href");

@@ -20,7 +20,7 @@ body {
 body > * {
     -webkit-backface-visibility: hidden;
     -webkit-box-sizing: border-box;
-    display: none;
+    /* display: none; */
     position: absolute;
     left: 0;
     width: 100%;
