@@ -7,36 +7,34 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-
-        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+% if ( ($ENV{SOCIAL_ENV}||="development") eq "production") {
+        <script type="text/javascript" src="/static/all.js"></script>
+% } else {
+        <script type="text/javascript" src="/static/jquery-1.3.2.min.js"></script>
         <script type="text/javascript" src="/static/jquery.oembed.js"></script>
         <script type="text/javascript" src="/static/jquery.ev.js"></script>
         <script type="text/javascript" src="/static/social.js"></script>
+% }
 
         <title>Social</title>
-        <style type="text/css" media="screen">
-          @import url(/static/jqtouch.min.css);
-          @import url(/static/themes/apple/theme.min.css);
-          @import url(/static/themes/vicutake/vicutake.css);
-          @import url(/static/social.css);
-        </style>
+        <link rel="stylesheet" href="/static/social.css" type="text/css" media="screen" />
     </head>
     <body>
         <div id="dashboard">
             <div class="toolbar">
                 <h1>Dashboard</h1>
             </div>
-            <ul>
+            <div class="toolbar">
                 <% if ($application->has_twitter_client) { %>
-                <li><a href="#twitter-statuses-friends" class="">Twitter</a></li>
+                <a href="#twitter-statuses-friends" class="button">Twitter</a>
                 <% } %>
                 <% if ($application->has_plurk_client) { %>
-                <li><a href="#plurk" class="">Plurk</a></li>
+                <a href="#plurk" class="button">Plurk</a>
                 <% } %>
                 <% if ($application->has_irc_clients) { %>
-                <li><a href="#irc-channels">IRC</a></li>
+                <a href="#irc-channels" class="button">IRC</a>
                 <% } %>
-            </ul>
+            </div>
             <div class="messages"></div>
         </div>
 

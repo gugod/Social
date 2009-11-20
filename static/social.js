@@ -192,7 +192,7 @@ $(function() {
         $("a").live("click", function() {
             var href = $(this).attr("href");
             if ( href.match(/^#\S+$/) ) {
-                if ( !$(this).is(".button") )
+                if ( !$(this).is(".backButton") )
                     $(this).addClass("active");
 
                 $(':focus').blur();
