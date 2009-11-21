@@ -70,12 +70,16 @@ input.submit {
     padding: 7px;
 }
 
-#plurk .line .response_count {
-    float: right;
-    margin: 0 0 0 10px;
+.line .response_count {
+    margin: 0 10px 0 0;
     padding: 2px ;
     color: #fff;
     background: #000;
-    font-weight: bold;
-    font-size: 70%;
+}
+
+.line .channel {
+    background: #000;
+    color: #fff;
+    margin: 0 10px 0 0;
+    padding: 0 5px;
 }

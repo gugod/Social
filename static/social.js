@@ -177,7 +177,13 @@ Social.Handlers = {
         var $line = Social.Irc.build_line(e);
         Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
 
-        Social.Dashboard.prepend_line($line.clone());
+        var $line2 = $line.clone();
+
+        $line2.prepend(
+            $("<span />").addClass("channel").text(e.channel)
+        );
+
+        Social.Dashboard.prepend_line($line2);
     },
 
     "irc_ctcp_action": function(e) {
