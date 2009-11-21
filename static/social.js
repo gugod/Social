@@ -124,6 +124,12 @@ Social.Plurk = {
             .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" href=\"http://www.plurk.com/" + name +"\">" + name + "</a>: ") )
             .append($message);
 
+        var plurk_page_uri = "http://plurk.com/m/p/" + parseInt(e.plurk_id).toString(36);
+        $line.bind("click", function() {
+            window.open(plurk_page_uri)
+            return false;
+        });
+
         return $line;
     }
 };
