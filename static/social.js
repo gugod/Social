@@ -185,9 +185,11 @@ Social.Handlers = {
 
         var $line2 = $line.clone();
 
-        $line2.prepend(
-            $("<span />").addClass("channel").text(e.channel)
-        );
+        $line2.prepend($("<span />").addClass("channel").text(e.channel));
+
+        $line2.bind("click", function() {
+            $("a[href=#" + Social.Irc.channel_div_for(e.channel).attr("id") + "]").trigger("click");
+        });
 
         Social.Dashboard.prepend_line($line2);
     },
