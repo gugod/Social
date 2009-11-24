@@ -83,3 +83,8 @@ input.submit {
     margin: 0 10px 0 0;
     padding: 0 5px;
 }
+
+li .messages {
+    font-size: 11pt;
+    font-weight: normal;
+}

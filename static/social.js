@@ -72,6 +72,12 @@ Social.Irc = {
 
         Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
         return $line;
+    },
+
+    append_line_to_channel_quicklook: function(channel, $line) {
+        var $channel_quicklook = $("a[href=#" + Social.Irc.channel_div_for(channel).attr("id") + "] ~ .messages");
+        $channel_quicklook.prepend($line.clone());
+        $channel_quicklook.find(".line:nth-child(4)").remove();
     }
 }
 
@@ -192,11 +198,15 @@ Social.Handlers = {
         });
 
         Social.Dashboard.prepend_line($line2);
+
+        Social.Irc.append_line_to_channel_quicklook(e.channel, $line);
     },
 
     "irc_ctcp_action": function(e) {
         var $line = Social.Irc.build_line(e);
         Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
+
+        Social.Irc.append_line_to_channel_quicklook(e.channel, $line);
     }
 };
 

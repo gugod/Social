@@ -90,7 +90,10 @@
             </div>
             <ul>
                 <% for my $name (map { my $o = $_; my $e = lc($_); $e =~ s/([^0-9a-z])/ord($1)/eg; [$e, $o]; } @$channels) { %>
-                <li><a href="#channel-<%= $name->[0] %>"><%= $name->[1] %></a></li>
+                <li>
+                    <a href="#channel-<%= $name->[0] %>"><%= $name->[1] %></a>
+                    <div class="messages"></div>
+                </li>
                 <% } %>
             </ul>
         </div>
