@@ -34,6 +34,9 @@
                 <% if ($application->has_irc_clients) { %>
                 <a href="#irc-channels" class="button">IRC</a>
                 <% } %>
+                <% if ($application->has_rtorrent_client) { %>
+                <a href="#rtorrent" class="button">rTorrent</a>
+                <% } %>
             </div>
             <div class="messages"></div>
         </div>
@@ -80,6 +83,23 @@
             <div class="messages"></div>
             <div class="toolbar">
                 <a href="#" class="button toggle-all-messages">Show all plurks</a>
+            </div>
+        </div>
+      <div id="rtorrent">
+            <div class="toolbar">
+                <h1>rTorrent</h1>
+                <a href="#dashboard" class="button back leftButton">Dashboard</a>
+            </div>
+            <form action="/rtorrent" method="post">
+                <div>
+                    <input type="text" name="text"><!-- mininova_id-->
+                    <input type="hidden" name="cmd"   value="load_start" />
+                    <input type="image"  class="submit" src="/static/09-chat2.png" />
+                </div>
+            </form>
+            <div class="messages"></div>
+            <div class="toolbar">
+                <!--  <a href="#" class="button toggle-all-messages">Show all torrent</a> -->
             </div>
         </div>
 

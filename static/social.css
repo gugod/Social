@@ -88,3 +88,9 @@ li .messages {
     font-size: 11pt;
     font-weight: normal;
 }
+#rtorrent .message{
+    display:block;
+}
+#rtorrent .rate,#rtorrent .cmd{
+    margin-left:10px;
+}

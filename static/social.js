@@ -148,7 +148,36 @@ Social.Dashboard = {
         $("#dashboard .messages").prepend( $line );
     }
 };
+Social.rTorrent= {
+    build_line: function(e) {
+        var created_at = new Date( Date.parse(e.created_at) );
 
+        var type   = "text";
+        var name   = e.name;
+
+        var $line = $('<div/>').attr({
+            'class': 'line ' + type,
+            'type': type,
+            "source": "rtorrent",
+            "id": "rtorrent-" + e.hash
+        });
+
+        var $message = $('<span/>').attr({"class": "message", "type": e.type });
+        $line
+            .append($('<span/>').attr({"class": "message", "type": e.type }).text(e.name))
+            .append($('<span/>').attr({"class": "percent" }).text(e.percent))
+            .append($('<span/>').attr({"class": "rate"}).text(e.human_up_rate))
+            .append($('<span/>').attr({"class": "rate"}).text(e.human_down_rate));
+        if(e.is_active=="1"){
+           $line.append($('<a/>').attr({"class": "cmd","type":"stop","href":"#"}).text('stop'));
+        }else{
+           $line.append($('<a/>').attr({"class": "cmd","type":"start","href":"#"}).text('start'));
+        }
+           $line.append($('<a/>').attr({"class": "cmd","type":"erase","href":"#"}).text('remove'));
+
+        return $line;
+    }
+}
 Social.Handlers = {
     "twitter_statuses_friends": function(e) {
         var $line = Social.Twitter.build_status_line(e);
@@ -205,8 +234,15 @@ Social.Handlers = {
     "irc_ctcp_action": function(e) {
         var $line = Social.Irc.build_line(e);
         Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
-
         Social.Irc.append_line_to_channel_quicklook(e.channel, $line);
+    },
+    "rtorrent_status": function(e) {
+        var $line = Social.rTorrent.build_line(e);
+        $("#"+$line.attr('id')).remove();
+        $("#rtorrent .messages").prepend( $line );
+    },
+    "rtorrent_remove_torrent": function(e) {
+        $("#rtorrent-"+e.hash).remove();
     }
 };
 
@@ -296,6 +332,21 @@ $(function() {
         return false;
     });
 
+    $("#rtorrent a.cmd").live("click", function() {
+        var self = this;
+        if($(this).attr('type')=='erase' && !confirm('remove torrent?')){
+            return false;
+        }
+        $.ajax({
+            url: '/rtorrent',
+            data: "cmd=d."+$(this).attr("type")+"&id="+this.parentNode.id.split(/-/)[1],
+            type: 'post',
+            dataType: 'json',
+            success: function(r) {
+            }
+        });
+        return false;
+    });
     if (navigator.userAgent.match(/(Mobile Safari|iPhone)/)) {
         Social.launch_polling();
     }
