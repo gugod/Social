@@ -1,17 +1,14 @@
 package Social::Helpers;
 use strict;
 use HTML::Entities;
-
 sub mq_publish {
     my ($self, $e) = @_;
     my $mq = Tatsumaki::MessageQueue->instance("social");
-
     $mq->publish({
         time => scalar localtime,
         %$e
     });
 }
-
 
 sub format_message {
     my($self, $text) = @_;

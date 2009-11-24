@@ -1,8 +1,8 @@
+MessageQueueBacklogLength: 100
 
 twitter:
   username: my_twitter_account
   password: s0m3th1n6
-
 
 ## Plurk config. All three top-level keys are optional.
 ## Uncomment the following block and put the correct values there to enable plurk support.
@@ -30,3 +30,6 @@ irc:
 
         # Channel with key are given as an array ref
         # - [secret_channnel, k3y0fch4n ]
+
+#rtorrent:
+#    url: "localhost:5000"

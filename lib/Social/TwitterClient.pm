@@ -2,7 +2,6 @@ package Social::TwitterClient;
 use Any::Moose;
 use AnyEvent::Twitter;
 use Social::Helpers;
-
 has config => (
     is => "rw",
     isa => "HashRef"
@@ -50,7 +49,6 @@ sub _build_twitty {
 
     $twitty->receive_statuses_mentions;
     $twitty->receive_statuses_friends;
-
     return $twitty;
 }
 

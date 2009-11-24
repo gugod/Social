@@ -83,3 +83,10 @@ input.submit {
     margin: 0 10px 0 0;
     padding: 0 5px;
 }
+
+#rtorrent .message{
+    display:block;
+}
+#rtorrent .rate,#rtorrent .cmd{
+    margin-left:10px;
+}

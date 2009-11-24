@@ -11,10 +11,12 @@ use Social::Controller::MultipartPoll;
 use Social::Controller::Irc;
 use Social::Controller::Twitter;
 use Social::Controller::Plurk;
+use Social::Controller::Rtorrent;
 
 use Social::IRCClient;
 use Social::TwitterClient;
 use Social::PlurkClient;
+use Social::RtorrentClient;
 
 has config => (
     is  => "rw",
@@ -40,6 +42,12 @@ has plurk_client => (
     lazy_build => 1
 );
 
+has rtorrent_client => (
+    is         => "ro",
+    isa        => "Social::RtorrentClient",
+    lazy_build => 1
+);
+
 sub app {
     my($class, %args) = @_;
     my $self = $class->new([
@@ -48,6 +56,7 @@ sub app {
         "/irc"       => "Social::Controller::Irc",
         "/twitter"   => "Social::Controller::Twitter",
         "/plurk"     => "Social::Controller::Plurk",
+        "/rtorrent"  => "Social::Controller::Rtorrent",
         "/"          => "Social::Controller::Dashboard",
     ]);
     $self->config($args{config});
@@ -57,6 +66,7 @@ sub app {
     $self->irc_clients    if $args{config}->{irc};
     $self->twitter_client if $args{config}->{twitter};
     $self->plurk_client   if $args{config}->{plurk};
+    $self->rtorrent_client   if $args{config}->{rtorrent};
 
     return $self;
 }
@@ -76,7 +86,13 @@ sub _build_twitter_client {
     return undef unless $x;
     return Social::TwitterClient->app(config => $x);
 }
+sub _build_rtorrent_client {
+    my $self = shift;
+    my $x = $self->config->{rtorrent};
 
+    return undef unless $x;
+    return Social::RtorrentClient->app(config => $x);
+}
 sub _build_irc_clients {
     my $self = shift;
 
