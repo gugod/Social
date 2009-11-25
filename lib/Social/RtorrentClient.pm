@@ -1,7 +1,8 @@
 package Social::RtorrentClient;
 use Any::Moose;
-use AnyEvent::Rtorrent;
 use Social::Helpers;
+use AnyEvent::RTPG  0.01;
+
 has config => (
     is => "rw",
     isa => "HashRef"
@@ -9,7 +10,7 @@ has config => (
 
 has rtorrenty => (
     is => "rw",
-    isa => "AnyEvent::Rtorrent",
+    isa => "AnyEvent::RTPG",
     required => 1,
     lazy_build => 1
 );
@@ -24,7 +25,7 @@ sub app {
 sub _build_rtorrenty {
     my ($self) = @_;
 
-    my $rtorrenty = AnyEvent::Rtorrent->new(url=>$self->config->{url});
+    my $rtorrenty = AnyEvent::RTPG->new(url=>$self->config->{url});
 
     $rtorrenty->reg_cb(
         refresh_status => sub {
