@@ -1,5 +1,3 @@
-MessageQueueBacklogLength: 100
-
 twitter:
   username: my_twitter_account
   password: s0m3th1n6
@@ -30,6 +28,11 @@ irc:
 
         # Channel with key are given as an array ref
         # - [secret_channnel, k3y0fch4n ]
+        #
 
-#rtorrent:
-#    url: "localhost:5000"
+# rTorrent Config. 
+# Add scgi_port = localhost:5000 to your ~/.rtorrent.rc first
+
+#
+# rtorrent:
+#   url: "localhost:5000"
