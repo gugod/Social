@@ -1,11 +1,7 @@
 package Social::Controller::Rtorrent;
-use strict;
-use warnings;
-
+use common::sense;
 use parent "Tatsumaki::Handler";
-
 use Social::Helpers;
-use Encode ();
 
 sub post {
     my ($self) = @_;
