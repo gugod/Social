@@ -52,7 +52,6 @@ sub _build_rtorrenty {
 
 sub update_status {
     my ($self, @args) = @_;
-    print Dumper(@args);
     $self->rtorrenty->rpc_command(@args);
 }
 
