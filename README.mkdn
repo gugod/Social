@@ -19,6 +19,7 @@ installed:
 - AnyEvent::Twitter
 - AnyEvent::Plurk
 - RTPG
+- AnyEvent::RTPG
 
 Running It
 ----------
