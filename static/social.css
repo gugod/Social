@@ -2,13 +2,13 @@
 @import "themes/apple/theme.css";
 @import "themes/vicutake/vicutake.css";
 
-body { -webkit-user-select: auto; }
-body > * { overflow: hidden; }
-.selectable, input, textarea {
-    -webkit-user-select: auto;
+body > * { 
+    overflow: hidden;
+    display: none;
 }
+
 .in, .out {
-    -webkit-animation-duration: 500ms;
+    -webkit-animation-duration: 250ms;
 }
 
 form {
@@ -58,16 +58,6 @@ input.submit {
 
 #dashboard .messages .line[source=irc] {
     background: #fff url(/static/irc.png) 2px right no-repeat;
-}
-
-#dashboard .toolbar:nth-child(2) {
-    background-image: none;
-    text-align: center;
-}
-
-#dashboard .toolbar:nth-child(2) a {
-    position: static;
-    padding: 7px;
 }
 
 .line .response_count {

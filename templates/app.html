@@ -7,6 +7,10 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
+        <title>Social</title>
+        <link rel="stylesheet" href="/static/social.css" type="text/css" media="screen" />
+
+
 % if ( ($ENV{SOCIAL_ENV}||="development") eq "production") {
         <script type="text/javascript" src="/static/all.js"></script>
 % } else {
@@ -15,29 +19,26 @@
         <script type="text/javascript" src="/static/jquery.ev.js"></script>
         <script type="text/javascript" src="/static/social.js"></script>
 % }
-
-        <title>Social</title>
-        <link rel="stylesheet" href="/static/social.css" type="text/css" media="screen" />
     </head>
     <body>
-        <div id="dashboard">
+        <div id="dashboard" class="current">
             <div class="toolbar">
                 <h1>Dashboard</h1>
             </div>
-            <div class="toolbar">
+            <ul>
                 <% if ($application->has_twitter_client) { %>
-                <a href="#twitter-statuses-friends" class="button">Twitter</a>
+                <li><a href="#twitter-statuses-friends">Twitter</a></li>
                 <% } %>
                 <% if ($application->has_plurk_client) { %>
-                <a href="#plurk" class="button">Plurk</a>
+                <li><a href="#plurk">Plurk</a></li>
                 <% } %>
                 <% if ($application->has_irc_clients) { %>
-                <a href="#irc-channels" class="button">IRC</a>
+                <li><a href="#irc-channels">IRC</a></li>
                 <% } %>
                 <% if ($application->has_rtorrent_client) { %>
-                <a href="#rtorrent" class="button">rTorrent</a>
+                <li><a href="#rtorrent">rTorrent</a></li>
                 <% } %>
-            </div>
+            </ul>
             <div class="messages"></div>
         </div>
 
