@@ -103,27 +103,16 @@ Social.Twitter = {
     build_status_line: function(e) {
         var created_at = new Date( Date.parse(e.created_at) );
 
-        var type   = "text";
-        var name   = e.user.screen_name;
-
-        var $line = $('<div/>').attr({
-            'class': 'line ' + type,
-            'nick': name,
-            'type': type,
-            "source": "twitter",
-            "id": "twitter-status-" + e.id
+        var $line = Social.build_message_line({
+            senderName: e.user.screen_name,
+            source: "twitter",
+            type: "text",
+            className: "text",
+            html: e.html,
+            time: created_at
         });
 
-        var $message = $('<span/>').attr({"class": "message", "type": e.type });
-        if (e.text) $message.text(e.text);
-        if (e.html) $message.html(e.html);
-
-        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
-
-        $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(created_at)) )
-            .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" rel=\"external\" href=\"http://twitter.com/" + name +"\">" + name + "</a>: ") )
-            .append($message);
+        $line.attr({"id": "twitter-status-" + e.id});
 
         return $line;
     }
