@@ -27,6 +27,39 @@ Social.launch_polling = function() {
     }
 }
 
+/*
+ * info = {
+ *   senderName: "gugod",     // the nickname of message sender
+ *   source: "irc",           // or "twitter", "plurk"
+ *   type: "irc_ctcp_action", // the raw type
+ *   className: "notice",     // any extra class name for html.
+ *   text: "...",
+ *   html: "...",
+ *   time: x                  // a Date object
+ * }
+ */
+
+Social.build_message_line = function(info) {
+    var $line = $('<div/>').attr({
+        'class'  : info.className + " line",
+        'nick'   : info.senderName,
+        'type'   : info.type,
+        "source" : info.source
+    });
+
+    var $message = $('<span/>').attr({"class": "message", "type": info.type});
+    if (info.text) $message.text(info.text);
+    if (info.html) $message.html(info.html);
+
+    $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
+
+    $line.append( $('<span/>').attr({"class": "time", "time": info.time }).text( time_text(info.time) ))
+        .append( $('<span/>').addClass('sender').text(info.senderName + ": ") )
+        .append($message);
+
+    return $line;
+}
+
 Social.Irc = {
     channel_div_for: function(channel) {
         var channel_el_id = "channel-" + channel.toLowerCase().replace(/[^0-9a-z]/g, function(s) { return s.toString().charCodeAt(0) });
@@ -34,41 +67,26 @@ Social.Irc = {
     },
 
     build_line: function(e) {
-        var name   = e.name;
-
-        var lineClassName = "text";
-        var messageClassName = "privmsg";
-
-        if (e.type == "irc_ctcp_action") {
-            messageClassName = "notice"
-        }
-
-        var $line = $('<div/>').attr({'class': 'line ' + lineClassName, 'nick': name, 'type': messageClassName, "source": "irc"});
-
-        var $message = $('<span/>').attr({"class": "message", "type": messageClassName });
-        if (e.text) $message.text(e.text);
-        if (e.html) $message.html(e.html);
-
-        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
-
-        $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-            .append( $('<span/>').addClass('sender').text(name + ": ") )
-            .append($message);
-
-        return $line;
+        return Social.build_message_line({
+            senderName: e.name,
+            source: "irc",
+            type:      (e.type == "irc_ctcp_action" ? "notice" : e.type),
+            className: "text",
+            text: e.text,
+            html: e.html,
+            time: e.time
+        });
     },
 
     append_event_line: function(e, message_body) {
-        var name   = e.name;
-
-        var $line = $('<div/>').attr({'class': 'line event', 'nick': name, 'type': e.type, "source": "irc"});
-
-        var $message = $('<span/>').attr({"class": "message", "type": e.type }).text(message_body);
-
-        $line
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-            .append($message);
+        var $line = Social.build_message_line({
+            senderName: e.name,
+            source: "irc",
+            type: e.type,
+            className: "event",
+            text: message_body,
+            time: e.time
+        });
 
         Social.Irc.channel_div_for(e.channel).find(".messages").prepend( $line );
         return $line;

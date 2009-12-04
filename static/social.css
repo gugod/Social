@@ -41,6 +41,10 @@ input.submit {
     display: none;
 }
 
+.line[type="irc_join"] .sender {
+    display: none;
+}
+
 #dashboard .messages .line {
     width: 95%;
     margin: 2px auto;
