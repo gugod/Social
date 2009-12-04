@@ -131,22 +131,17 @@ Social.Twitter = {
 
 Social.Plurk = {
     build_line: function(e) {
-        var type   = "text";
-        var name   = e.owner ? e.owner.nick_name : e.owner_id;
+        var $line = Social.build_message_line({
+            senderName: e.owner ? e.owner.nick_name : e.owner_id,
+            source: "plurk",
+            type: "text",
+            className: "text",
+            html: "<span>" + e.qualifier + "<span>&nbsp;" + e.html,
+            time: e.time
+        });
 
-        var $line = $('<div/>').attr({'class': 'line ' + type, 'nick': name, 'type': type, "source": "plurk"});
 
-        var $message = $('<span/>').attr({"class": "message", "type": e.type });
-
-        $message.html("<span>" + e.qualifier + "<span>" + e.html);
-
-        $message.find('a').oembed(null, { embedMethod: "append", maxWidth: 320 });
-
-        $line
-            .append( $('<span/>').attr({"class": "response_count"}).text( e.response_count ) )
-            .append( $('<span/>').attr({"class": "time", "time": e.time }).text(time_text(e.time)) )
-            .append( $('<span/>').addClass('sender').html("<a target=\"_blank\" href=\"http://www.plurk.com/" + name +"\">" + name + "</a>: ") )
-            .append($message);
+        $line.prepend( $('<span/>').attr({"class": "response_count"}).text( e.response_count ) );
 
         var plurk_page_uri = "http://plurk.com/m/p/" + parseInt(e.plurk_id).toString(36);
         $line.bind("click", function() {
