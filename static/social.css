@@ -88,3 +88,45 @@ li .messages {
 #rtorrent .rate,#rtorrent .cmd{
     margin-left:10px;
 }
+
+
+#message-sources {
+    margin: 10px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    height: auto;
+}
+#message-sources:after {
+    content: ".";
+    height: 8px;
+    display: block;
+    clear: both;
+    visibility: hidden;
+}
+
+#message-sources li {
+    border: none;
+    display: block;
+    height: 40px;
+    text-align: center;
+    float: left;
+    -webkit-border-radius: 0;
+    padding: 0;
+    margin: 0;
+    background: none;
+}
+
+#message-sources li a {
+    background: #fff;
+    display: block;
+    float: left;
+    width: 60px;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    margin: 4px;
+    padding: 0;
+    -webkit-border-radius: 8px;
+    -webkit-box-shadow: 0px 0px 8px #000;
+}
