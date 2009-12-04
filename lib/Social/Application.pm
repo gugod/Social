@@ -1,5 +1,4 @@
 package Social::Application;
-use 5.010;
 use Any::Moose;
 
 extends "Tatsumaki::Application";
@@ -12,11 +11,6 @@ use Social::Controller::Irc;
 use Social::Controller::Twitter;
 use Social::Controller::Plurk;
 use Social::Controller::Rtorrent;
-
-use Social::IRCClient;
-use Social::TwitterClient;
-use Social::PlurkClient;
-use Social::RtorrentClient;
 
 has config => (
     is  => "rw",
@@ -63,15 +57,17 @@ sub app {
 
     $Tatsumaki::MessageQueue::BacklogLength = $args{config}->{MessageQueueBacklogLength} || 300;
 
-    $self->irc_clients    if $args{config}->{irc};
-    $self->twitter_client if $args{config}->{twitter};
-    $self->plurk_client   if $args{config}->{plurk};
-    $self->rtorrent_client   if $args{config}->{rtorrent};
+    $self->irc_clients     if $args{config}->{irc};
+    $self->twitter_client  if $args{config}->{twitter};
+    $self->plurk_client    if $args{config}->{plurk};
+    $self->rtorrent_client if $args{config}->{rtorrent};
 
     return $self;
 }
 
 sub _build_plurk_client {
+    require Social::PlurkClient;
+
     my $self = shift;
     my $x = $self->config->{plurk};
 
@@ -80,20 +76,28 @@ sub _build_plurk_client {
 }
 
 sub _build_twitter_client {
+    require Social::TwitterClient;
+
     my $self = shift;
     my $x = $self->config->{twitter};
 
     return undef unless $x;
     return Social::TwitterClient->app(config => $x);
 }
+
 sub _build_rtorrent_client {
+    require Social::RtorrentClient;
+
     my $self = shift;
     my $x = $self->config->{rtorrent};
 
     return undef unless $x;
     return Social::RtorrentClient->app(config => $x);
 }
+
 sub _build_irc_clients {
+    require Social::IRCClient;
+
     my $self = shift;
 
     my $CONFIG = $self->config->{irc};
