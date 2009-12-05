@@ -25,8 +25,8 @@ sub post {
         $self->application->irc_send($irc_event, $params{channel}, encode_utf8($text));
     }
 
-    my $html = Social::Helpers->format_message($text);
-    Social::Helpers->mq_publish({
+    my $html = format_message($text);
+    mq_publish({
         type    => "irc_${irc_event}",
         html    => $html,
         channel => $params{channel},

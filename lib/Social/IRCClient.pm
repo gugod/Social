@@ -18,11 +18,11 @@ sub new {
                 my $msg = $packet->{params}[1];
                 (my $who = $packet->{prefix}) =~ s/\!.*//;
 
-                Social::Helpers->mq_publish({
+                mq_publish({
                     type    => "irc_" . lc($packet->{command}),
                     channel => $self->heap->{network} . " " . $channel,
                     name    => $who,
-                    html    => Social::Helpers->format_message( Encode::decode_utf8($msg) )
+                    html    => format_message( Encode::decode_utf8($msg) )
                 });
             }
         },
@@ -33,11 +33,11 @@ sub new {
 
             $tag = lc($tag);
 
-            Social::Helpers->mq_publish({
+            mq_publish({
                 type    => "irc_ctcp_${tag}",
                 channel => $self->heap->{network} . " " . $channel,
                 name    => $who,
-                html    => Social::Helpers->format_message( Encode::decode_utf8($text) )
+                html    => format_message( Encode::decode_utf8($text) )
             });
         },
 
@@ -59,7 +59,7 @@ sub new {
 
         join => sub {
             my ($self, $nick, $channel, $is_myself) = @_;
-            Social::Helpers->mq_publish({
+            mq_publish({
                 type      => 'irc_join',
                 channel   => $self->heap->{network} . " " . $channel,
                 name      => $nick,
@@ -69,7 +69,7 @@ sub new {
 
         part => sub {
             my ($self, $nick, $channel, $is_myself) = @_;
-            Social::Helpers->mq_publish({
+            mq_publish({
                 type      => 'irc_part',
                 channel   => $self->heap->{network} . " " . $channel,
                 name      => $nick,
@@ -79,7 +79,7 @@ sub new {
 
         quit => sub {
             my ($self, $nick, $channel) = @_;
-            Social::Helpers->mq_publish({
+            mq_publish({
                 type      => 'irc_quit',
                 channel   => $self->heap->{network} . " " . $channel,
                 name      => $nick,

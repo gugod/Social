@@ -36,8 +36,8 @@ sub _build_twitty {
             for (reverse @statuses) {
                 my (undef, $status) = @$_;
                 $status->{type} = $type;
-                $status->{html} = Social::Helpers->format_message($status->{text});
-                Social::Helpers->mq_publish($status);
+                $status->{html} = format_message($status->{text});
+                mq_publish($status);
             }
         }
     };

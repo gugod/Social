@@ -31,7 +31,7 @@ sub _build_rtorrenty {
         refresh_status => sub {
             my ($rtorrenty, $lists) = @_;
             for my $list (reverse @$lists) {
-                Social::Helpers->mq_publish({
+                mq_publish({
                     %$list,
                     type => "rtorrent_status",
                 });
@@ -39,7 +39,7 @@ sub _build_rtorrenty {
         },
         rtorrent_remove_torrent => sub {
             my ($rtorrenty, $torrent_hash) = @_;
-                Social::Helpers->mq_publish({
+                mq_publish({
                     hash=>$torrent_hash,
                     type => "rtorrent_remove_torrent",
                 });

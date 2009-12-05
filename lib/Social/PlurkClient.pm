@@ -36,10 +36,10 @@ sub _build_plurky {
             my ($p, $plurks) = @_;
 
             for my $pu (reverse @$plurks) {
-                Social::Helpers->mq_publish({
+                mq_publish({
                     %$pu,
                     type => "plurk",
-                    html => Social::Helpers->format_message($pu->{content_raw})
+                    html => format_message($pu->{content_raw})
                 });
             }
         }
