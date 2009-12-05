@@ -12,7 +12,7 @@ use IO::All;
 chdir( dirname(__FILE__) . "/../static" );
 
 my @js = (
-    "jquery-1.3.2.min.js",
+    "jquery-1.4a1.min.js",
     "jquery.oembed.js",
     "jquery.ev.js",
     "social.js"
