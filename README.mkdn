@@ -20,6 +20,7 @@ installed:
 - AnyEvent::Plurk
 - RTPG
 - AnyEvent::RTPG
+- JSON::XS
 
 Running It
 ----------
