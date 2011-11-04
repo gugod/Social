@@ -29,6 +29,17 @@ sub get {
 
     my $irc_event = "privmsg";
     $self->application->irc_send( $irc_event, $network . ' ' . $channel , encode_utf8($message));
+
+    my $html = format_message($text);
+    mq_publish({
+        type    => "irc_${irc_event}",
+        html    => $html,
+        channel => $channel,
+        name    => 'Commit',
+        address => $self->request->address,
+        time    => scalar localtime(time),
+    });
+
     $self->write({ success => 1 });
 }
 
