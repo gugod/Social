@@ -1,5 +1,6 @@
 package Social::Application;
 use Any::Moose;
+use 5.10.0;
 
 extends "Tatsumaki::Application";
 
@@ -11,6 +12,7 @@ use Social::Controller::Irc;
 use Social::Controller::Twitter;
 use Social::Controller::Plurk;
 use Social::Controller::Rtorrent;
+use Social::Controller::API;
 
 has config => (
     is  => "rw",
@@ -45,6 +47,7 @@ has rtorrent_client => (
 sub app {
     my($class, %args) = @_;
     my $self = $class->new([
+        "/api"       => "Social::Controller::API",
         "/mpoll"     => "Social::Controller::MultipartPoll",
         "/poll"      => "Social::Controller::Poll",
         "/irc"       => "Social::Controller::Irc",
@@ -61,7 +64,6 @@ sub app {
     $self->twitter_client  if $args{config}->{twitter};
     $self->plurk_client    if $args{config}->{plurk};
     $self->rtorrent_client if $args{config}->{rtorrent};
-
     return $self;
 }
 
@@ -109,6 +111,7 @@ sub _build_irc_clients {
         $x->heap->{config}  = $config;
         $x->heap->{network} = $network;
 
+        say "Connecting to @{[ $config->{host} ]}...";
         $x->connect(
             $config->{host},
             $config->{port} || 6667,
@@ -117,16 +120,26 @@ sub _build_irc_clients {
                 password => $config->{password}
             }
         );
-
         $IRC_CLIENT{$network} = $x;
     }
     return \%IRC_CLIENT;
 }
 
+
+=head2 irc_nick
+
+=cut
+
 sub irc_nick {
     my $self = shift;
     return $self->config->{irc}{nick};
 }
+
+=head2 irc_send( $cmd, $target, "{{network}} {{channel}}", ... )
+
+send message to irc.
+
+=cut
 
 sub irc_send {
     my $self = shift;
@@ -139,6 +152,10 @@ sub irc_send {
 
     $client->send_srv($cmd, $channel, @params);
 }
+
+=head2 irc_channels 
+
+=cut
 
 sub irc_channels {
     my $self = shift;
