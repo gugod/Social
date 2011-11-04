@@ -30,7 +30,7 @@ sub get {
     my $irc_event = "privmsg";
     $self->application->irc_send( $irc_event, $network . ' ' . $channel , encode_utf8($message));
 
-    my $html = format_message($messgae);
+    my $html = format_message($message);
     mq_publish({
         type    => "irc_${irc_event}",
         html    => $html,
