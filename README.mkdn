@@ -20,6 +20,7 @@ installed:
 - AnyEvent::Plurk
 - RTPG
 - AnyEvent::RTPG
+- JSON::XS
 
 Running It
 ----------
@@ -33,3 +34,24 @@ You need to provide a path to your config file like this:
 
 See config/social.yml for the example and description of the configrable
 content.
+
+API Controller
+--------------
+
+Social provides an API controller, you can send messages from the API.
+
+For example,
+
+    #!/usr/bin/env perl
+    use LWP::UserAgent;
+    use HTTP::Request::Common;
+    use JSON::XS;
+    use URI;
+    my $network = ...;
+    my $channel = ...;
+    my $msg = shift;
+    $ua = LWP::UserAgent->new;
+    my $uri = URI->new( 'http://localhost:9999/api' );
+    $uri->query_form({ payload => encode_json({ network => $network , channel => $channel , message => $msg }) });
+    $response = $ua->request(GET $uri );
+    warn $response->content;

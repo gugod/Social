@@ -43,6 +43,8 @@ sub new {
 
         registered => sub {
             my ($con) = @_;
+            $con->enable_ping(60);
+
             my $channels = $con->heap->{config}{channels};
 
             for my $x (@$channels) {
