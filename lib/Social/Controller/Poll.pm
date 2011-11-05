@@ -4,6 +4,10 @@ use parent qw(Tatsumaki::Handler);
 __PACKAGE__->asynchronous(1);
 
 use Tatsumaki::MessageQueue;
+use AnyEvent::IRC::Util qw(encode_ctcp);
+use Encode qw(encode_utf8);
+use Social::Helpers;
+
 
 sub get {
     my ($self) = @_;
