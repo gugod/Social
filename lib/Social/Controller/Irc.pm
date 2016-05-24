@@ -10,9 +10,9 @@ use Social::Helpers;
 
 sub post {
     my ($self) = @_;
-    my %params = %{$self->request->params};
+    my %params = %{$self->request->parameters};
 
-    my $text = $params{text};
+    my $text = Encode::decode_utf8($params{text});
     my $irc_event = "privmsg";
 
     if ($text =~ s{^/me }{}) {
