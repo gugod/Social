@@ -1,12 +1,12 @@
-Encode
-YAML
-AnyEvent::IRC
-FindBin
-HTML::Entities
-Plack
-Plack::Request
-Tatsumaki
-AnyEvent::Twitter
-AnyEvent::Plurk
-RTPG
-AnyEvent::RTPG
+requires 'Encode';
+requires 'YAML';
+requires 'AnyEvent::IRC';
+requires 'FindBin';
+requires 'HTML::Entities';
+requires 'Plack';
+requires 'Plack::Request';
+requires 'Tatsumaki';
+requires 'AnyEvent::Twitter';
+requires 'AnyEvent::Plurk';
+requires 'RTPG';
+requires 'AnyEvent::RTPG';
