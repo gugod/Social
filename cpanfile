@@ -1,3 +1,4 @@
+requires 'Moose';
 requires 'Encode';
 requires 'YAML';
 requires 'AnyEvent::IRC';

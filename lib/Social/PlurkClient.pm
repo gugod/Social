@@ -1,5 +1,5 @@
 package Social::PlurkClient;
-use Any::Moose;
+use Moose;
 use AnyEvent::Plurk 0.01;
 use Social::Helpers;
 

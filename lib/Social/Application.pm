@@ -1,5 +1,5 @@
 package Social::Application;
-use Any::Moose;
+use Moose;
 use 5.10.0;
 
 extends "Tatsumaki::Application";

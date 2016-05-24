@@ -1,5 +1,5 @@
 package Social::RtorrentClient;
-use Any::Moose;
+use Moose;
 use Social::Helpers;
 use AnyEvent::RTPG  0.01;
 

@@ -1,5 +1,5 @@
 package Social::TwitterClient;
-use Any::Moose;
+use Moose;
 use AnyEvent::Twitter;
 use Social::Helpers;
 has config => (
